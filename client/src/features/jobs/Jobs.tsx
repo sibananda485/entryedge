@@ -27,8 +27,8 @@ export default function Jobs() {
   return (
     <div className="max-w-6xl mx-auto grid grid-cols-3 gap-5">
       <div className="space-y-3">
-        {Array.from({ length: 5 }).map(() => {
-          return <JobCard />;
+        {Array.from({ length: 5 }).map((_, i) => {
+          return <JobCard key={i} />;
         })}
       </div>
       <Card className="sticky top-14 h-remaining-height col-span-2 overflow-auto">
