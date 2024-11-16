@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -24,8 +24,9 @@ import axios from "axios";
 import { ToastAction } from "@/components/ui/toast";
 import { LoaderCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { useAppDispatch } from "@/app/hooks";
-import { setAuth } from "@/features/auth/authSlice";
+import { useAppDispatch, useAppSelector } from "@/app/hooks";
+import { selectIsLoggedIn, setAuth } from "@/features/auth/authSlice";
+import { BASE_URL } from "@/lib/constants";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
@@ -50,7 +51,9 @@ interface LoginError {
 
 export default function Login() {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const isLoggedIn = useAppSelector(selectIsLoggedIn);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -66,18 +69,12 @@ export default function Login() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
       const { data } = await axios.post<LoginRes>(
-        "http://localhost:3000/api/auth/login",
+        BASE_URL + "/auth/login",
         values
       );
       localStorage.setItem("token", data.token);
-      dispatch(
-        setAuth({
-          authToken: data.token,
-          isLoggedin: true,
-          role: data.user.role,
-          user: data.user,
-        })
-      );
+      dispatch(setAuth(data.user));
+      navigate("/");
       toast({
         title: "Login Success",
         duration: 1000,
@@ -94,7 +91,9 @@ export default function Login() {
       }
     }
   }
-
+  if (isLoggedIn) {
+    return <Navigate to="/" />;
+  }
   return (
     <Card className="mx-auto max-w-sm shadow-none mt-20 ">
       <CardHeader>

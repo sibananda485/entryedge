@@ -4,7 +4,6 @@ import { useRouteError, ErrorResponse, Link } from "react-router-dom";
 
 export default function ErrorPage() {
   const error = useRouteError() as ErrorResponse;
-  console.log(error);
   if (error.status == 404)
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 text-center px-4">

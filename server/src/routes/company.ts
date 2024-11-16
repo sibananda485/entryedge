@@ -1,13 +1,8 @@
 import { Router } from "express";
-import {
-  handleCreateCompany,
-  handleGetCompany,
-  handleUpdateCompany,
-} from "../controllers/company";
-import { userMiddleWare } from "../middleware/userMiddleware";
+import { handleGetCompany, handleUpdateCompany } from "../controllers/company";
+import { adminMiddleWare } from "../middleware/adminMiddleware";
 
 export const companyRouter = Router();
 
-companyRouter.get("/", [userMiddleWare], handleGetCompany);
-companyRouter.post("/", [userMiddleWare], handleCreateCompany);
-companyRouter.patch("/", [userMiddleWare], handleUpdateCompany);
+companyRouter.get("/", [adminMiddleWare], handleGetCompany);
+companyRouter.post("/", [adminMiddleWare], handleUpdateCompany);

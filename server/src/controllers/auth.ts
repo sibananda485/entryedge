@@ -64,3 +64,34 @@ export const handleSignup = async (req: Request, res: Response) => {
     res.json(user);
   }
 };
+
+export const handleToken = async (req: Request, res: Response) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    res.status(401).json({ error: "Unauthorized" });
+    return;
+  } else {
+    try {
+      const token = authHeader.split(" ")[1];
+      const decoded = jwt.verify(token, SECRET) as { id: number };
+      const user = await prisma.user.findFirst({
+        where: { id: decoded.id },
+        select: {
+          email: true,
+          id: true,
+          name: true,
+          role: true,
+        },
+      });
+      if (!user) {
+        res.status(401).json({ message: "Unauthorized" });
+        return;
+      } else {
+        res.json(user);
+      }
+    } catch (error) {
+      res.status(401).json({ message: "Unauthorized" });
+      return;
+    }
+  }
+};

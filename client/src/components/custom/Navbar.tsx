@@ -2,10 +2,19 @@ import { cn } from "@/lib/utils";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "../ui/button";
 import { ModeToggle } from "../theme/Toggle";
-import { Bell, Handshake, MessageSquareText, User } from "lucide-react";
+import { Bell, Handshake, MessageSquareText } from "lucide-react";
+import { useAppSelector } from "@/app/hooks";
+import { selectIsLoggedIn, selectRole } from "@/features/auth/authSlice";
+import { navData } from "@/lib/constants";
+import { ProfileDD } from "./ProfileDD";
 
 const Navbar = () => {
   const { pathname } = useLocation();
+  const role = useAppSelector(selectRole);
+  const isLoggedIn = useAppSelector(selectIsLoggedIn);
+  const filteredNavData = navData.filter((item) =>
+    item.access.some((a) => a == role)
+  );
   return (
     <header className="sticky top-0 z-50 w-full border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-14 max-w-screen-2xl items-center px-5">
@@ -17,16 +26,47 @@ const Navbar = () => {
             </span>
           </Link>
           <nav className="flex items-center gap-4 lg:gap-6">
-            <Link
-              to="/"
-              className={cn(
-                "transition-colors text-sm hover:text-foreground/80",
-                pathname === "/" ? "text-foreground" : "text-foreground/60"
-              )}
-            >
-              Home
-            </Link>
-            <Link
+            {isLoggedIn ? (
+              filteredNavData.map((a) => (
+                <Link
+                  to={a.path}
+                  className={cn(
+                    "transition-colors text-sm hover:text-foreground/80",
+                    pathname == a.path
+                      ? "text-foreground"
+                      : "text-foreground/60"
+                  )}
+                >
+                  {a.label}
+                </Link>
+              ))
+            ) : (
+              <>
+                {" "}
+                <Link
+                  to="/"
+                  className={cn(
+                    "transition-colors text-sm hover:text-foreground/80",
+                    pathname === "/" ? "text-foreground" : "text-foreground/60"
+                  )}
+                >
+                  Home
+                </Link>
+                <Link
+                  to="/login"
+                  className={cn(
+                    "transition-colors text-sm hover:text-foreground/80",
+                    pathname === "/login"
+                      ? "text-foreground"
+                      : "text-foreground/60"
+                  )}
+                >
+                  Login
+                </Link>
+              </>
+            )}
+
+            {/* <Link
               to="/my-application"
               className={`transition-colors text-sm  hover:text-foreground/80 ${
                 pathname === "/my-application"
@@ -43,7 +83,7 @@ const Navbar = () => {
               } `}
             >
               Saved
-            </Link>
+            </Link> */}
           </nav>
         </div>
         {/* <MobileNav /> */}
@@ -62,11 +102,7 @@ const Navbar = () => {
                 <Bell className="fill-current w-10 h-10" />
               </Link>
             </Button>
-            <Button variant="ghost" size="icon">
-              <Link to="/test">
-                <User className="fill-current w-10 h-10" />
-              </Link>
-            </Button>
+            <ProfileDD />
             <ModeToggle />
           </nav>
         </div>

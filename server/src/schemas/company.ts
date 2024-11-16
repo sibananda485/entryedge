@@ -1,15 +1,6 @@
 import { z } from "zod";
 
-export const LoginSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(8, "Password cann't be less than 8 character"),
-});
-export const SignupSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(8, "Password cann't be less than 8 character"),
-  name: z.string().optional(),
-});
-const formSchema = z.object({
+export const CompanySchema = z.object({
   name: z.string().min(2, "Company name must be at least 2 characters"),
   industry: z.string().min(2, "Industry must be at least 2 characters"),
   bio: z.string().min(10, "Bio must be at least 10 characters"),
@@ -21,5 +12,10 @@ const formSchema = z.object({
   city: z.string().min(2, "City must be at least 2 characters"),
   state: z.string().min(2, "State must be at least 2 characters"),
   size: z.enum(["SMALL", "MEDIUM", "LARGE"]),
-  startDate: z.date(),
+  startDate: z.preprocess(
+    (value) => (typeof value === "string" ? new Date(value) : value),
+    z.date().refine((date) => !isNaN(date.getTime()), {
+      message: "Invalid date",
+    })
+  ),
 });
