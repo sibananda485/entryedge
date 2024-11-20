@@ -11,8 +11,8 @@ import { useAppDispatch, useAppSelector } from "./app/hooks";
 import { fetchUserData, selectAuthLoading } from "./features/auth/authSlice";
 import AdminProtected from "./components/wrapper/AdminProtected";
 import AuthProtected from "./components/wrapper/AuthProtected";
+import { CompanyTab } from "./features/company/CompanyTab";
 import Profile from "./features/profile/Profile";
-import { ProfileTab } from "./features/profile/ProfileTab";
 
 axios.interceptors.request.use(
   (config) => {
@@ -30,7 +30,11 @@ axios.interceptors.request.use(
 axios.interceptors.response.use(
   (response) => response, // Pass through successful responses
   (error) => {
-    if (error.response && error.response.status === 401) {
+    if (
+      error.response &&
+      error.response.status === 401 &&
+      error.response.data.message == "Invaid Token"
+    ) {
       // Handle token expiration or unauthorized access
       console.log("Unauthorized! Redirecting to login...");
       localStorage.removeItem("token"); // Clear the token
@@ -46,7 +50,6 @@ function App() {
   const token = localStorage.getItem("token");
 
   useEffect(() => {
-    console.log("TOKEN XCH");
     dispatch(fetchUserData(token));
   }, [dispatch, token]);
 
@@ -60,7 +63,9 @@ function Layout() {
   return (
     <>
       <Navbar />
-      <Outlet />
+      <div className="px-2">
+        <Outlet />
+      </div>
     </>
   );
 }
@@ -108,11 +113,19 @@ const router = createBrowserRouter([
         ),
       },
       {
+        path: "/company",
+        element: (
+          <AdminProtected>
+            <CompanyTab />
+          </AdminProtected>
+        ),
+      },
+      {
         path: "/profile",
         element: (
-          <AuthProtected>
-            <ProfileTab />
-          </AuthProtected>
+          <UserProtected>
+            <Profile />
+          </UserProtected>
         ),
       },
     ],

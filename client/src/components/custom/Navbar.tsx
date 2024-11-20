@@ -27,8 +27,9 @@ const Navbar = () => {
           </Link>
           <nav className="flex items-center gap-4 lg:gap-6">
             {isLoggedIn ? (
-              filteredNavData.map((a) => (
+              filteredNavData.map((a, i) => (
                 <Link
+                  key={i}
                   to={a.path}
                   className={cn(
                     "transition-colors text-sm hover:text-foreground/80",

@@ -1,4 +1,5 @@
 import {
+  Building,
   Cloud,
   CreditCard,
   Github,
@@ -31,7 +32,11 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useAppDispatch, useAppSelector } from "@/app/hooks";
-import { fetchUserData, selectIsLoggedIn } from "@/features/auth/authSlice";
+import {
+  fetchUserData,
+  selectIsLoggedIn,
+  selectRole,
+} from "@/features/auth/authSlice";
 import { useToast } from "@/hooks/use-toast";
 import { Link } from "react-router-dom";
 
@@ -39,6 +44,7 @@ export function ProfileDD() {
   const { toast } = useToast();
   const dispatch = useAppDispatch();
   const isLoggedIn = useAppSelector(selectIsLoggedIn);
+  const role = useAppSelector(selectRole);
 
   const handleSignOut = async () => {
     localStorage.removeItem("token");
@@ -63,13 +69,23 @@ export function ProfileDD() {
         <DropdownMenuLabel>My Account</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <Link to="/profile">
-            <DropdownMenuItem>
-              <User />
-              <span>Profile</span>
-              <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
-            </DropdownMenuItem>
-          </Link>
+          {role == "ADMIN" ? (
+            <Link to="/company">
+              <DropdownMenuItem>
+                <Building />
+                <span>Company profile</span>
+                <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
+              </DropdownMenuItem>
+            </Link>
+          ) : (
+            <Link to="/profile">
+              <DropdownMenuItem>
+                <User />
+                <span>Profile</span>
+                <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
+              </DropdownMenuItem>
+            </Link>
+          )}
           <DropdownMenuItem>
             <CreditCard />
             <span>Billing</span>

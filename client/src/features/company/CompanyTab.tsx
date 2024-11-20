@@ -1,8 +1,37 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import ProfilePreview from "./ProfilePreview";
-import Profile from "./Profile";
+import ProfilePreview from "./CompanyPreview";
+import Profile from "./CompanyForm";
+import { useEffect } from "react";
+import { useAppDispatch, useAppSelector } from "@/app/hooks";
+import {
+  fetchCompanyData,
+  selectCompanyError,
+  selectCompanyLoading,
+} from "./companySlice";
+import { Loader } from "lucide-react";
+import ApiError from "@/components/custom/ApiError";
 
-export function ProfileTab() {
+export function CompanyTab() {
+  const dispatch = useAppDispatch();
+  const loading = useAppSelector(selectCompanyLoading);
+  const error = useAppSelector(selectCompanyError);
+  useEffect(() => {
+    dispatch(fetchCompanyData());
+  }, []);
+
+  if (loading) {
+    return <Loader className="animate-spin mx-auto mt-20" />;
+  }
+  if (error) {
+    return (
+      <ApiError
+        message="Error whlile getting the profile data"
+        title="ERROR PROFILE DATA !"
+        onRetry={() => dispatch(fetchCompanyData())}
+      />
+    );
+  }
+
   return (
     <Tabs defaultValue="account">
       <TabsList className="max-w-4xl mx-auto mt-3 grid w-full grid-cols-2 bg-transparent">

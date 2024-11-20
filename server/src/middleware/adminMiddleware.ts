@@ -40,7 +40,7 @@ export const adminMiddleWare = async (
         }
       }
     } catch (error) {
-      res.status(401).json({ message: "Unauthorized" });
+      res.status(401).send("Invaid Token");
       return;
     }
   }
