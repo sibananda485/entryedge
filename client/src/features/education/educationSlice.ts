@@ -3,7 +3,7 @@ import { BASE_URL } from "@/lib/constants";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
-interface Company {
+interface Education {
   id: string;
   name: string;
   industry: string;
@@ -22,50 +22,50 @@ interface Company {
   updatedAt: string;
 }
 
-export const fetchCompanyData = createAsyncThunk(
-  "company/fetchCompanyData",
+export const fetchEducationData = createAsyncThunk(
+  "education/fetchEducationData",
   async () => {
-    const response = await axios.get<Company>(BASE_URL + "/company");
+    const response = await axios.get<Education>(BASE_URL + "/education");
     return response.data;
   }
 );
 
-export interface CompanyState {
+export interface EducationState {
   loading: boolean;
   error: boolean;
-  data: Company | null;
+  data: Education | null;
 }
 
-const initialState: CompanyState = {
+const initialState: EducationState = {
   data: null,
   loading: true,
   error: false,
 };
 
-export const profileSlice = createSlice({
-  name: "auth",
+export const educationSlice = createSlice({
+  name: "education",
   initialState,
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(fetchCompanyData.pending, (state) => {
+      .addCase(fetchEducationData.pending, (state) => {
         state.loading = true;
         state.error = false;
       })
-      .addCase(fetchCompanyData.fulfilled, (state, action) => {
+      .addCase(fetchEducationData.fulfilled, (state, action) => {
         state.data = action.payload || null;
         state.error = false;
         state.loading = false;
       })
-      .addCase(fetchCompanyData.rejected, (state) => {
+      .addCase(fetchEducationData.rejected, (state) => {
         state.loading = false;
         state.error = true;
       });
   },
 });
 
-export const selectCompanyError = (state: RootState) => state.company.error;
-export const selectCompanyData = (state: RootState) => state.company.data;
-export const selectCompanyLoading = (state: RootState) => state.company.loading;
+export const selectEducationError = (state: RootState) => state.education.error;
+export const selectEducationData = (state: RootState) => state.education.data;
+export const selectEducationLoading = (state: RootState) => state.education.loading;
 
-export default profileSlice.reducer;
+export default educationSlice.reducer;

@@ -18,14 +18,20 @@ export const userMiddleWare = async (
       const decoded = jwt.verify(token, SECRET) as { id: number };
       const user = await prisma.user.findFirst({
         where: { id: decoded.id },
-        select: { email: true, id: true, name: true, role: true },
+        select: {
+          email: true,
+          id: true,
+          name: true,
+          role: true,
+          hashedPassword: true,
+        },
       });
       if (!user) {
         res.status(401).json({ message: "Unauthorized" });
         return;
       } else {
         if (user.role == "USER") {
-          req.body.user = user;
+          req.user = user;
           next();
           return;
         } else {

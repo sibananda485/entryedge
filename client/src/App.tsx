@@ -10,9 +10,11 @@ import UserProtected from "./components/wrapper/UserProtected";
 import { useAppDispatch, useAppSelector } from "./app/hooks";
 import { fetchUserData, selectAuthLoading } from "./features/auth/authSlice";
 import AdminProtected from "./components/wrapper/AdminProtected";
-import AuthProtected from "./components/wrapper/AuthProtected";
 import { CompanyTab } from "./features/company/CompanyTab";
 import Profile from "./features/profile/Profile";
+import Education from "./features/education/Education";
+import Experience from "./features/experience/Experience";
+import Personal from "./features/personal/Personal";
 
 axios.interceptors.request.use(
   (config) => {
@@ -70,70 +72,105 @@ function Layout() {
   );
 }
 
-const router = createBrowserRouter([
+const router = createBrowserRouter(
+  [
+    {
+      path: "/",
+      element: <Layout />,
+      errorElement: <ErrorPage />,
+      children: [
+        {
+          path: "/",
+          element: <Jobs />,
+        },
+        {
+          path: "/my-application",
+          element: (
+            <UserProtected>
+              <p>My Application</p>
+            </UserProtected>
+          ),
+        },
+        {
+          path: "/saved",
+          element: (
+            <UserProtected>
+              <SavedJob />
+            </UserProtected>
+          ),
+        },
+        {
+          path: "/post",
+          element: (
+            <AdminProtected>
+              <p>POST</p>
+            </AdminProtected>
+          ),
+        },
+        {
+          path: "/applicant",
+          element: (
+            <AdminProtected>
+              <p>Applicant</p>
+            </AdminProtected>
+          ),
+        },
+        {
+          path: "/company",
+          element: (
+            <AdminProtected>
+              <CompanyTab />
+            </AdminProtected>
+          ),
+        },
+        {
+          path: "/profile",
+          element: (
+            <UserProtected>
+              <Profile />
+            </UserProtected>
+          ),
+        },
+        {
+          path: "/personal",
+          element: (
+            <UserProtected>
+              <Personal />
+            </UserProtected>
+          ),
+        },
+        {
+          path: "/education",
+          element: (
+            <UserProtected>
+              <Education />
+            </UserProtected>
+          ),
+        },
+        {
+          path: "/experience",
+          element: (
+            <UserProtected>
+              <Experience />
+            </UserProtected>
+          ),
+        },
+      ],
+    },
+    {
+      path: "/login",
+      element: <Login />,
+    },
+  ],
   {
-    path: "/",
-    element: <Layout />,
-    errorElement: <ErrorPage />,
-    children: [
-      {
-        path: "/",
-        element: <Jobs />,
-      },
-      {
-        path: "/my-application",
-        element: (
-          <UserProtected>
-            <p>My Application</p>
-          </UserProtected>
-        ),
-      },
-      {
-        path: "/saved",
-        element: (
-          <UserProtected>
-            <SavedJob />
-          </UserProtected>
-        ),
-      },
-      {
-        path: "/post",
-        element: (
-          <AdminProtected>
-            <p>POST</p>
-          </AdminProtected>
-        ),
-      },
-      {
-        path: "/applicant",
-        element: (
-          <AdminProtected>
-            <p>Applicant</p>
-          </AdminProtected>
-        ),
-      },
-      {
-        path: "/company",
-        element: (
-          <AdminProtected>
-            <CompanyTab />
-          </AdminProtected>
-        ),
-      },
-      {
-        path: "/profile",
-        element: (
-          <UserProtected>
-            <Profile />
-          </UserProtected>
-        ),
-      },
-    ],
-  },
-  {
-    path: "/login",
-    element: <Login />,
-  },
-]);
+    future: {
+      v7_skipActionErrorRevalidation: true,
+      v7_fetcherPersist: true,
+      v7_normalizeFormMethod: true,
+      v7_partialHydration: true,
+      v7_relativeSplatPath: true,
+    },
+  }
+);
 
 export default App;

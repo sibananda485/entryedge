@@ -3,6 +3,7 @@ import express, { Request, Response } from "express";
 import { authRouter } from "./routes/auth";
 import cors from "cors";
 import { companyRouter } from "./routes/company";
+import { personalDataRouter } from "./routes/personal";
 
 declare global {
   namespace Express {
@@ -26,6 +27,7 @@ app.get("/", (req: Request, res: Response) => {
 });
 app.use("/api/auth", authRouter);
 app.use("/api/company", companyRouter);
+app.use("/api/personal", personalDataRouter);
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);

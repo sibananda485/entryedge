@@ -94,6 +94,7 @@ export const authSlice = createSlice({
 export const { setAuth } = authSlice.actions;
 
 export const selectRole = (state: RootState) => state.auth.role;
+export const selectUser = (state: RootState) => state.auth.user;
 export const selectIsLoggedIn = (state: RootState) => state.auth.isLoggedin;
 export const selectAuthLoading = (state: RootState) => state.auth.loading;
 

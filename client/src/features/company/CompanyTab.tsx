@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "@/app/hooks";
 import {
   fetchCompanyData,
+  selectCompanyData,
   selectCompanyError,
   selectCompanyLoading,
 } from "./companySlice";
@@ -14,10 +15,11 @@ import ApiError from "@/components/custom/ApiError";
 export function CompanyTab() {
   const dispatch = useAppDispatch();
   const loading = useAppSelector(selectCompanyLoading);
+  const data = useAppSelector(selectCompanyData);
   const error = useAppSelector(selectCompanyError);
   useEffect(() => {
-    dispatch(fetchCompanyData());
-  }, []);
+    !data && dispatch(fetchCompanyData());
+  }, [data]);
 
   if (loading) {
     return <Loader className="animate-spin mx-auto mt-20" />;

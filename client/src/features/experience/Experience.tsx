@@ -2,7 +2,6 @@ import {
   ChevronRight,
   Download,
   Ellipsis,
-  Loader,
   MapPin,
   Phone,
   Replace,
@@ -18,64 +17,32 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useEffect } from "react";
-import { useAppDispatch, useAppSelector } from "@/app/hooks";
-import ApiError from "@/components/custom/ApiError";
-import {
-  selectPersonalLoading,
-  selectPersonalData,
-  selectPersonalError,
-  fetchPersonalData,
-} from "../personal/personalSlice";
-import { selectUser } from "../auth/authSlice";
-export default function Profile() {
-  const dispatch = useAppDispatch();
-  const loading = useAppSelector(selectPersonalLoading);
-  const user = useAppSelector(selectUser);
-  const personalData = useAppSelector(selectPersonalData);
-  const error = useAppSelector(selectPersonalError);
-  useEffect(() => {
-    !personalData && dispatch(fetchPersonalData());
-  }, [personalData]);
-
-  if (loading) {
-    return <Loader className="animate-spin mx-auto mt-20" />;
-  }
-  if (error) {
-    return (
-      <ApiError
-        message="Error whlile getting the profile data"
-        title="ERROR PROFILE DATA !"
-        onRetry={() => dispatch(fetchPersonalData())}
-      />
-    );
-  }
+export default function Experience() {
   return (
     <>
       <div className="max-w-3xl container mx-auto divide-y-2">
         <div className="space-y-8 py-5">
           <div className="flex justify-between items-center">
             <h1 className="text-4xl font-bold tracking-wider">
-              {personalData?.firstName} {personalData?.lastName}
+              Sibananda Sahu
             </h1>
             <div className="bg-foreground text-background text-4xl font-bold flex justify-center items-center rounded-full p-5">
-              {personalData?.firstName[0]}
-              {personalData?.lastName[0]}
+              SS
             </div>
           </div>
           <Link to="/personal" className="flex justify-between items-center">
             <div className="space-y-2">
               <div className="flex items-center gap-3">
                 <Mail className="text-muted-foreground w-6 h-6" />
-                <p className="font-semibold">{user?.email}</p>
+                <p className="font-semibold">sahusiba485@gmail.com</p>
               </div>
               <div className="flex items-center gap-3">
                 <Phone className="text-muted-foreground w-6 h-6" />
-                <p className="font-semibold">{personalData?.phone}</p>
+                <p className="font-semibold">8433980976</p>
               </div>
               <div className="flex items-center gap-3">
                 <MapPin className="text-muted-foreground w-6 h-6" />
-                <p className="font-semibold">{`${personalData?.city}, ${personalData?.state}, ${personalData?.country}`}</p>
+                <p className="font-semibold">Mumbai, Maharastra, In</p>
               </div>
             </div>
             <div>
