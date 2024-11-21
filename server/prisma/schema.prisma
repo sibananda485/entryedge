@@ -33,6 +33,7 @@ model User {
   company        Company?
   personalData   PersonalData?
   education      Education[]
+  experience     Experience[]
 }
 
 model Company {
@@ -63,10 +64,28 @@ model Education {
   startDate    DateTime
   endDate      DateTime?
   description  String?
+  isPursuing   Boolean
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
   User         User      @relation(fields: [userId], references: [id])
   userId       Int
+}
+
+model Experience {
+  id             Int       @id @default(autoincrement())
+  company        String
+  jobTitle       String
+  location       String
+  startDate      DateTime
+  endDate        DateTime?
+  description    String?
+  industry       String?
+  employmentType String?
+  isCurrent      Boolean
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  User           User      @relation(fields: [userId], references: [id])
+  userId         Int
 }
 
 model PersonalData {

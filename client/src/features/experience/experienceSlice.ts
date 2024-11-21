@@ -5,27 +5,21 @@ import axios from "axios";
 
 interface Experience {
   id: string;
-  name: string;
-  industry: string;
-  bio: string;
-  website: string;
-  linkedIn: string;
-  instagram: string;
-  zip: string;
-  country: string;
-  city: string;
-  state: string;
-  size: "SMALL" | "MEDIUM" | "LARGE";
+  company: string;
+  jobTitle: string;
+  location: string;
   startDate: string;
-  userId: string;
-  createdAt: string;
-  updatedAt: string;
+  isCurrent: boolean;
+  employmentType: string;
+  endDate?: string;
+  description?: string;
+  industry?: string;
 }
 
 export const fetchExperience = createAsyncThunk(
   "experience/fetchExperience",
   async () => {
-    const response = await axios.get<Experience>(BASE_URL + "/experience");
+    const response = await axios.get<Experience[]>(BASE_URL + "/experience");
     return response.data;
   }
 );
@@ -33,7 +27,7 @@ export const fetchExperience = createAsyncThunk(
 export interface ExperienceState {
   loading: boolean;
   error: boolean;
-  data: Experience | null;
+  data: Experience[] | null;
 }
 
 const initialState: ExperienceState = {
@@ -53,7 +47,7 @@ export const experienceSlice = createSlice({
         state.error = false;
       })
       .addCase(fetchExperience.fulfilled, (state, action) => {
-        state.data = action.payload || null;
+        state.data = action.payload;
         state.error = false;
         state.loading = false;
       })
@@ -64,8 +58,10 @@ export const experienceSlice = createSlice({
   },
 });
 
-export const selectExperienceError = (state: RootState) => state.experience.error;
+export const selectExperienceError = (state: RootState) =>
+  state.experience.error;
 export const selectExperienceData = (state: RootState) => state.experience.data;
-export const selectExperienceLoading = (state: RootState) => state.experience.loading;
+export const selectExperienceLoading = (state: RootState) =>
+  state.experience.loading;
 
 export default experienceSlice.reducer;

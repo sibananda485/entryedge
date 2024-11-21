@@ -12,10 +12,5 @@ export const CompanySchema = z.object({
   city: z.string().min(2, "City must be at least 2 characters"),
   state: z.string().min(2, "State must be at least 2 characters"),
   size: z.enum(["SMALL", "MEDIUM", "LARGE"]),
-  startDate: z.preprocess(
-    (value) => (typeof value === "string" ? new Date(value) : value),
-    z.date().refine((date) => !isNaN(date.getTime()), {
-      message: "Invalid date",
-    })
-  ),
+  startDate: z.string().min(1, "Start date required"),
 });

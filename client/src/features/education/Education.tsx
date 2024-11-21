@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -11,7 +11,14 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { ArrowLeft, CalendarIcon, Pencil, Plus, Trash2 } from "lucide-react";
+import {
+  ArrowLeft,
+  CalendarIcon,
+  Loader,
+  Pencil,
+  Plus,
+  Trash2,
+} from "lucide-react";
 import { format } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
 import {
@@ -39,6 +46,17 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { Link } from "react-router-dom";
 import { Checkbox } from "@/components/ui/checkbox";
+import { useAppDispatch, useAppSelector } from "@/app/hooks";
+import ApiError from "@/components/custom/ApiError";
+import {
+  selectEducationLoading,
+  selectEducationData,
+  selectEducationError,
+  fetchEducationData,
+} from "./educationSlice";
+import axios from "axios";
+import { BASE_URL } from "@/lib/constants";
+import { useToast } from "@/hooks/use-toast";
 
 const getSchema = (flag: boolean) => {
   const EducationSchema = z.object({
@@ -61,33 +79,16 @@ type EducationEntry = {
   fieldOfStudy: string;
   startDate: Date;
   isPursuing: boolean;
-  endDate?: Date | undefined;
-  description?: string | undefined;
+  endDate?: Date;
+  description?: string;
 };
 
 export default function Education() {
-  const [educationEntries, setEducationEntries] = useState<EducationEntry[]>([
-    {
-      institution: "University of Example",
-      degree: "Bachelor of Science",
-      fieldOfStudy: "Computer Science",
-      startDate: new Date("2016-09-01"),
-      endDate: new Date("2020-05-31"),
-      description:
-        "Studied various aspects of computer science including algorithms, data structures, and software engineering.",
-      isPursuing: false,
-    },
-    {
-      institution: "University of Example",
-      degree: "Bachelor of Science",
-      fieldOfStudy: "Computer Science",
-      startDate: new Date("2016-09-01"),
-      endDate: new Date("2020-05-31"),
-      description:
-        "Studied various aspects of computer science including algorithms, data structures, and software engineering.",
-      isPursuing: false,
-    },
-  ]);
+  const { toast } = useToast();
+  const dispatch = useAppDispatch();
+  const educationData = useAppSelector(selectEducationData);
+  const loading = useAppSelector(selectEducationLoading);
+  const error = useAppSelector(selectEducationError);
 
   const form = useForm<EducationEntry>({
     resolver: async (values, context, options) => {
@@ -99,13 +100,102 @@ export default function Education() {
       degree: "",
       fieldOfStudy: "",
       description: "",
-      isPursuing: false,
+      isPursuing: undefined,
     },
   });
 
-  const onSubmit = (data: EducationEntry) => {
-    console.log(data);
+  const {
+    formState: { isSubmitting },
+  } = form;
+
+  const onSubmit = async (data: EducationEntry) => {
+    try {
+      const res = await axios.post(BASE_URL + "/education", data);
+      if (res.status == 201) {
+        await dispatch(fetchEducationData()).unwrap();
+        form.reset();
+        toast({
+          title: "Ecucation added successfully",
+        });
+      } else {
+        toast({
+          title: "Failed to add education",
+          description: "Please try again",
+        });
+      }
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Failed to add education",
+        description: "Please try again",
+      });
+    }
   };
+  const onEditSubmit = async (data: EducationEntry, index: number) => {
+    try {
+      const res = await axios.patch(BASE_URL + "/education/" + index, data);
+      if (res.status == 201) {
+        await dispatch(fetchEducationData()).unwrap();
+        form.reset();
+        toast({
+          title: "Ecucation updated successfully",
+        });
+      } else {
+        toast({
+          title: "Failed to update education",
+          description: "Please try again",
+        });
+      }
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Failed to update education",
+        description: "Please try again",
+      });
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    try {
+      const res = await axios.delete(BASE_URL + "/education/" + id);
+      if (res.status == 200) {
+        await dispatch(fetchEducationData()).unwrap();
+        form.reset();
+        toast({
+          title: "Ecucation deleted successfully",
+        });
+      } else {
+        toast({
+          title: "Failed to delete education",
+          description: "Please try again",
+        });
+      }
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Failed to delete education",
+        description: "Please try again",
+      });
+    }
+  };
+
+  useEffect(() => {
+    !educationData && dispatch(fetchEducationData());
+  }, [educationData]);
+
+  if (loading) {
+    return <Loader className="animate-spin mx-auto mt-20" />;
+  }
+
+  if (error) {
+    return (
+      <ApiError
+        message="Error whlile getting the profile data"
+        title="ERROR PROFILE DATA !"
+        onRetry={() => dispatch(fetchEducationData())}
+      />
+    );
+  }
 
   return (
     <>
@@ -119,7 +209,20 @@ export default function Education() {
           <div className="flex justify-between items-center">
             <CardTitle className="text-2xl font-bold">Education</CardTitle>
             <Dialog>
-              <DialogTrigger asChild>
+              <DialogTrigger
+                onClick={() =>
+                  form.reset({
+                    degree: "",
+                    description: "",
+                    fieldOfStudy: "",
+                    endDate: undefined,
+                    institution: "",
+                    isPursuing: false,
+                    startDate: undefined,
+                  })
+                }
+                asChild
+              >
                 <Button variant="secondary">
                   <Plus /> Add
                 </Button>
@@ -309,7 +412,10 @@ export default function Education() {
                       )}
                     />
                     <DialogFooter>
-                      <Button type="submit">Add</Button>
+                      <Button disabled={isSubmitting} type="submit">
+                        {isSubmitting && <Loader />}
+                        Add
+                      </Button>
                     </DialogFooter>
                   </form>
                 </Form>
@@ -321,8 +427,8 @@ export default function Education() {
           </CardDescription>
         </CardHeader>
         <div className="divide-y-2">
-          {educationEntries.length > 0 ? (
-            educationEntries.map((entry, index) => (
+          {educationData && educationData.length > 0 ? (
+            educationData.map((entry, index) => (
               <div key={index}>
                 <CardHeader>
                   <div className="flex justify-between items-start">
@@ -335,13 +441,240 @@ export default function Education() {
                       </CardDescription>
                     </div>
                     <div className="flex space-x-2">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="flex items-center"
-                      >
-                        <Pencil className="w-4 h-4" /> Edit
-                      </Button>
+                      <Dialog>
+                        <DialogTrigger
+                          onClick={() => {
+                            form.reset({
+                              ...educationData[index],
+                              startDate: new Date(
+                                educationData[index].startDate
+                              ),
+                              endDate: educationData[index].endDate
+                                ? new Date(educationData[index].endDate)
+                                : undefined,
+                            });
+                          }}
+                          asChild
+                        >
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="flex items-center"
+                          >
+                            <Pencil className="w-4 h-4" /> Edit
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent className="max-w-3xl">
+                          <DialogHeader>
+                            <DialogTitle>Edit Education</DialogTitle>
+                            <DialogDescription>
+                              Edit your education details below.
+                            </DialogDescription>
+                          </DialogHeader>
+                          <Form {...form}>
+                            <form
+                              onSubmit={form.handleSubmit((data) =>
+                                onEditSubmit(data, +entry.id)
+                              )}
+                              className="space-y-4"
+                            >
+                              <FormField
+                                control={form.control}
+                                name="institution"
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel>Institution</FormLabel>
+                                    <FormControl>
+                                      <Input
+                                        placeholder="University name"
+                                        {...field}
+                                      />
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+                              <div className="grid grid-cols-2 gap-4">
+                                <FormField
+                                  control={form.control}
+                                  name="degree"
+                                  render={({ field }) => (
+                                    <FormItem>
+                                      <FormLabel>Degree</FormLabel>
+                                      <FormControl>
+                                        <Input
+                                          placeholder="e.g. Bachelor of Science"
+                                          {...field}
+                                        />
+                                      </FormControl>
+                                      <FormMessage />
+                                    </FormItem>
+                                  )}
+                                />
+                                <FormField
+                                  control={form.control}
+                                  name="fieldOfStudy"
+                                  render={({ field }) => (
+                                    <FormItem>
+                                      <FormLabel>Field of Study</FormLabel>
+                                      <FormControl>
+                                        <Input
+                                          placeholder="e.g. Computer Science"
+                                          {...field}
+                                        />
+                                      </FormControl>
+                                      <FormMessage />
+                                    </FormItem>
+                                  )}
+                                />
+                              </div>
+                              <div className="grid grid-cols-2 gap-4">
+                                <FormField
+                                  control={form.control}
+                                  name="startDate"
+                                  render={({ field }) => (
+                                    <FormItem className="flex flex-col">
+                                      <FormLabel>Start Date</FormLabel>
+                                      <Popover>
+                                        <PopoverTrigger asChild>
+                                          <FormControl>
+                                            <Button
+                                              variant="outline"
+                                              className={`w-full justify-start text-left font-normal ${
+                                                !field.value &&
+                                                "text-muted-foreground"
+                                              }`}
+                                            >
+                                              <CalendarIcon className="mr-2 h-4 w-4" />
+                                              {field.value ? (
+                                                format(field.value, "MMMM yyyy")
+                                              ) : (
+                                                <span>Pick a date</span>
+                                              )}
+                                            </Button>
+                                          </FormControl>
+                                        </PopoverTrigger>
+                                        <PopoverContent
+                                          className="w-auto p-0"
+                                          align="start"
+                                        >
+                                          <Calendar
+                                            mode="single"
+                                            selected={field.value}
+                                            onSelect={field.onChange}
+                                            disabled={(date) =>
+                                              date > new Date()
+                                            }
+                                            initialFocus
+                                          />
+                                        </PopoverContent>
+                                      </Popover>
+                                      <FormMessage />
+                                    </FormItem>
+                                  )}
+                                />
+                                <FormField
+                                  control={form.control}
+                                  name="endDate"
+                                  render={({ field }) => (
+                                    <FormItem className="flex flex-col">
+                                      <FormLabel>End Date</FormLabel>
+                                      <Popover>
+                                        <PopoverTrigger asChild>
+                                          <FormControl>
+                                            <Button
+                                              variant="outline"
+                                              className={`w-full justify-start text-left font-normal ${
+                                                !field.value &&
+                                                "text-muted-foreground"
+                                              }`}
+                                            >
+                                              <CalendarIcon className="mr-2 h-4 w-4" />
+                                              {field.value ? (
+                                                format(field.value, "MMMM yyyy")
+                                              ) : (
+                                                <span>Pick a date</span>
+                                              )}
+                                            </Button>
+                                          </FormControl>
+                                        </PopoverTrigger>
+                                        <PopoverContent
+                                          className="w-auto p-0"
+                                          align="start"
+                                        >
+                                          <Calendar
+                                            mode="single"
+                                            selected={field.value}
+                                            onSelect={field.onChange}
+                                            disabled={(date) =>
+                                              date > new Date()
+                                            }
+                                            initialFocus
+                                          />
+                                        </PopoverContent>
+                                      </Popover>
+
+                                      <FormMessage />
+                                    </FormItem>
+                                  )}
+                                />
+                              </div>
+
+                              <FormField
+                                control={form.control}
+                                name="isPursuing"
+                                render={({ field }) => (
+                                  <FormItem className="flex items-center gap-2">
+                                    <FormControl>
+                                      <Checkbox
+                                        checked={field.value}
+                                        onCheckedChange={field.onChange}
+                                      />
+                                    </FormControl>
+                                    <FormLabel
+                                      style={{ marginTop: 0 }}
+                                      className="text-accent-foreground font-normal"
+                                    >
+                                      Currently Pursuing
+                                    </FormLabel>
+                                  </FormItem>
+                                )}
+                              />
+
+                              <FormField
+                                control={form.control}
+                                name="description"
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel>Description</FormLabel>
+                                    <FormControl>
+                                      <Textarea
+                                        placeholder="Brief description of your studies"
+                                        className="resize-none"
+                                        {...field}
+                                      />
+                                    </FormControl>
+
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+                              <DialogFooter>
+                                <Button
+                                  type="button"
+                                  variant="destructive"
+                                  onClick={() => handleDelete(entry.id)}
+                                >
+                                  <Trash2 /> Delete
+                                </Button>
+                                <Button disabled={isSubmitting} type="submit">
+                                  {isSubmitting && <Loader />} Update
+                                </Button>
+                              </DialogFooter>
+                            </form>
+                          </Form>
+                        </DialogContent>
+                      </Dialog>
                     </div>
                   </div>
                 </CardHeader>

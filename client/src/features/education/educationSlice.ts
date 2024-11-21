@@ -5,27 +5,19 @@ import axios from "axios";
 
 interface Education {
   id: string;
-  name: string;
-  industry: string;
-  bio: string;
-  website: string;
-  linkedIn: string;
-  instagram: string;
-  zip: string;
-  country: string;
-  city: string;
-  state: string;
-  size: "SMALL" | "MEDIUM" | "LARGE";
-  startDate: string;
-  userId: string;
-  createdAt: string;
-  updatedAt: string;
+  institution: string;
+  degree: string;
+  fieldOfStudy: string;
+  startDate: Date;
+  isPursuing: boolean;
+  endDate?: Date;
+  description?: string;
 }
 
 export const fetchEducationData = createAsyncThunk(
   "education/fetchEducationData",
   async () => {
-    const response = await axios.get<Education>(BASE_URL + "/education");
+    const response = await axios.get<Education[]>(BASE_URL + "/education");
     return response.data;
   }
 );
@@ -33,7 +25,7 @@ export const fetchEducationData = createAsyncThunk(
 export interface EducationState {
   loading: boolean;
   error: boolean;
-  data: Education | null;
+  data: Education[] | null;
 }
 
 const initialState: EducationState = {
@@ -53,7 +45,7 @@ export const educationSlice = createSlice({
         state.error = false;
       })
       .addCase(fetchEducationData.fulfilled, (state, action) => {
-        state.data = action.payload || null;
+        state.data = action.payload;
         state.error = false;
         state.loading = false;
       })
@@ -66,6 +58,7 @@ export const educationSlice = createSlice({
 
 export const selectEducationError = (state: RootState) => state.education.error;
 export const selectEducationData = (state: RootState) => state.education.data;
-export const selectEducationLoading = (state: RootState) => state.education.loading;
+export const selectEducationLoading = (state: RootState) =>
+  state.education.loading;
 
 export default educationSlice.reducer;
