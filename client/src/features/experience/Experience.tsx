@@ -116,8 +116,6 @@ export default function Experience() {
     },
   });
 
-  console.log(form.formState.errors);
-
   const {
     formState: { isSubmitting },
   } = form;
@@ -249,7 +247,7 @@ export default function Experience() {
                 <DialogHeader>
                   <DialogTitle>Add Experience</DialogTitle>
                   <DialogDescription>
-                    Add your e details below.
+                    Add your experience details below.
                   </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -502,9 +500,7 @@ export default function Experience() {
               </DialogContent>
             </Dialog>
           </div>
-          <CardDescription>
-            Manage your Experienceal information.
-          </CardDescription>
+          <CardDescription>Manage your Experience information.</CardDescription>
         </CardHeader>
         <div className="divide-y-2">
           {experienceData && experienceData.length > 0 ? (

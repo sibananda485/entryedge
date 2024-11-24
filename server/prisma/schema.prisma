@@ -37,23 +37,24 @@ model User {
 }
 
 model Company {
-  id        Int         @id @default(autoincrement())
+  id        Int          @id @default(autoincrement())
   name      String
-  industry  String
-  bio       String
-  website   String
-  linkedIn  String
-  instagram String
-  zip       String
-  country   String
-  city      String
-  state     String
-  size      CompanySize
-  startDate DateTime
-  userId    Int         @unique
-  user      User        @relation(fields: [userId], references: [id])
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
+  industry  String?
+  bio       String?
+  website   String?
+  linkedIn  String?
+  instagram String?
+  zip       String?
+  country   String?
+  city      String?
+  state     String?
+  size      CompanySize?
+  startDate DateTime?
+  userId    Int          @unique
+  user      User         @relation(fields: [userId], references: [id])
+  job       Job[]
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
 }
 
 model Education {
@@ -89,20 +90,42 @@ model Experience {
 }
 
 model PersonalData {
-  id         Int      @id @default(autoincrement())
+  id         Int       @id @default(autoincrement())
   firstName  String
   middleName String?
   lastName   String
-  dob        DateTime
-  street     String
-  country    String
-  phone      String
-  city       String
-  state      String
-  zipCode    String
+  dob        DateTime?
+  street     String?
+  country    String?
+  phone      String?
+  city       String?
+  state      String?
+  zipCode    String?
   bio        String?
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-  User       User     @relation(fields: [userId], references: [id])
-  userId     Int      @unique
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  User       User      @relation(fields: [userId], references: [id])
+  userId     Int       @unique
+  savedJob   Job[]
+}
+
+model Job {
+  id               Int            @id @default(autoincrement())
+  title            String
+  location         String
+  salaryMin        String
+  salaryMax        String
+  employmentType   String
+  workHour         String
+  education        String
+  deadline         DateTime
+  skills           String
+  jd               String         @db.VarChar(1000)
+  qualification    String         @db.VarChar(1000)
+  responsibilities String         @db.VarChar(1000)
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  Company          Company        @relation(fields: [companyId], references: [id])
+  companyId        Int
+  PersonalData     PersonalData[]
 }

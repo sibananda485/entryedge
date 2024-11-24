@@ -39,6 +39,7 @@ export const handleLogin = async (req: Request, res: Response) => {
     }
   }
 };
+
 export const handleSignup = async (req: Request, res: Response) => {
   try {
     SignupSchema.parse(req.body);
@@ -46,22 +47,55 @@ export const handleSignup = async (req: Request, res: Response) => {
     res.status(400).json({ message: "Schema validation error", error });
     return;
   }
-  const { email, password, name } = req.body as z.infer<typeof SignupSchema>;
+
+  const { email, password, name, firstName, lastName, middleName, role } =
+    req.body as z.infer<typeof SignupSchema>;
 
   const isUserExists = await prisma.user.findFirst({
     where: {
       email,
     },
   });
+
   if (isUserExists) {
-    res.status(401).json({ message: "User Already exists" });
+    res.status(409).json({ message: "User Already exists" });
     return;
   } else {
     const hashedPassword = await bcrypt.hash(password, 10);
-    const user = await prisma.user.create({
-      data: { email, hashedPassword, name },
-    });
-    res.json(user);
+    if (role == "USER") {
+      const user = await prisma.user.create({
+        data: {
+          email,
+          hashedPassword,
+          name,
+          personalData: {
+            create: {
+              firstName,
+              lastName,
+              middleName,
+            },
+          },
+        },
+      });
+      res.status(201).json(user);
+      return;
+    } else {
+      const user = await prisma.user.create({
+        data: {
+          email,
+          hashedPassword,
+          name,
+          role: "ADMIN",
+          company: {
+            create: {
+              name,
+            },
+          },
+        },
+      });
+      res.status(201).json(user);
+      return;
+    }
   }
 };
 

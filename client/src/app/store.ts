@@ -4,6 +4,8 @@ import companyReducer from "../features/company/companySlice";
 import experienceReducer from "../features/experience/experienceSlice";
 import educationReducer from "../features/education/educationSlice";
 import personalReducer from "../features/personal/personalSlice";
+import jobReducer from "../features/jobs/jobSlice";
+import savedJobReducer from "../features/savedJob/savedJobSlice";
 
 export const store = configureStore({
   reducer: {
@@ -12,6 +14,8 @@ export const store = configureStore({
     experience: experienceReducer,
     education: educationReducer,
     personal: personalReducer,
+    job: jobReducer,
+    savedJob: savedJobReducer,
   },
 });
 

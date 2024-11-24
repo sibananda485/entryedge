@@ -71,11 +71,19 @@ export default function Profile() {
               </div>
               <div className="flex items-center gap-3">
                 <Phone className="text-muted-foreground w-6 h-6" />
-                <p className="font-semibold">{personalData?.phone}</p>
+                <p className="font-semibold">
+                  {personalData && personalData.phone
+                    ? personalData.phone
+                    : "N/A"}
+                </p>
               </div>
               <div className="flex items-center gap-3">
                 <MapPin className="text-muted-foreground w-6 h-6" />
-                <p className="font-semibold">{`${personalData?.city}, ${personalData?.state}, ${personalData?.country}`}</p>
+                {personalData && personalData.country ? (
+                  <p className="font-semibold">{`${personalData?.city}, ${personalData?.state}, ${personalData?.country}`}</p>
+                ) : (
+                  <p>N/A</p>
+                )}
               </div>
             </div>
             <div>

@@ -49,10 +49,10 @@ export default function CompanyPreview() {
 
           <div>
             <h1 className="text-3xl font-bold">
-              {companyData ? companyData.name : "N/A"}
+              {companyData ? companyData.name : <span>N/A</span>}
             </h1>
             <p className="text-muted-foreground">
-              {companyData ? companyData.industry : "N/A"}
+              {companyData ? companyData.industry : <span>N/A</span>}
             </p>
           </div>
         </header>
@@ -63,7 +63,13 @@ export default function CompanyPreview() {
               <CardTitle>About Us</CardTitle>
             </CardHeader>
             <CardContent>
-              <p>{companyData ? companyData.bio : "N/A"}</p>
+              <p>
+                {companyData && companyData.bio ? (
+                  companyData.bio
+                ) : (
+                  <span>N/A</span>
+                )}
+              </p>
             </CardContent>
           </Card>
 
@@ -75,25 +81,32 @@ export default function CompanyPreview() {
               <div className="flex items-center space-x-2">
                 <UsersIcon className="text-muted-foreground" />
                 <span>
-                  Size: {companyData ? companyData.size.toLowerCase() : "N/A"}{" "}
-                  {companyData && "company"}
+                  Size:{" "}
+                  {companyData && companyData.size ? (
+                    companyData.size.toLowerCase()
+                  ) : (
+                    <span>N/A</span>
+                  )}{" "}
+                  {companyData && companyData.size && "company"}
                 </span>
               </div>
               <div className="flex items-center space-x-2">
                 <CalendarIcon className="text-muted-foreground" />
                 <span>
                   Founded:{" "}
-                  {companyData
-                    ? new Date(companyData.startDate).toLocaleDateString()
-                    : "N/A"}
+                  {companyData && companyData.startDate ? (
+                    new Date(companyData.startDate).toLocaleDateString()
+                  ) : (
+                    <span>N/A</span>
+                  )}
                 </span>
               </div>
               <div className="flex items-center space-x-2">
                 <MapPinIcon className="text-muted-foreground" />
-                {companyData ? (
+                {companyData && companyData.country ? (
                   <span>{`${companyData.city}, ${companyData.state} ${companyData.zip}, ${companyData.country}`}</span>
                 ) : (
-                  "N/A"
+                  <span>N/A</span>
                 )}
               </div>
             </CardContent>
@@ -108,7 +121,7 @@ export default function CompanyPreview() {
             <Button
               variant="outline"
               className="flex items-center space-x-2"
-              disabled={!companyData}
+              disabled={!companyData || !companyData.website}
               onClick={() =>
                 companyData && window.open(companyData.website, "_blank")
               }
@@ -119,7 +132,7 @@ export default function CompanyPreview() {
             <Button
               variant="outline"
               className="flex items-center space-x-2"
-              disabled={!companyData}
+              disabled={!companyData || !companyData.linkedIn}
               onClick={() =>
                 companyData && window.open(companyData.linkedIn, "_blank")
               }
@@ -130,7 +143,7 @@ export default function CompanyPreview() {
             <Button
               variant="outline"
               className="flex items-center space-x-2"
-              disabled={!companyData}
+              disabled={!companyData || !companyData.instagram}
               onClick={() =>
                 companyData && window.open(companyData.instagram, "_blank")
               }
@@ -146,7 +159,8 @@ export default function CompanyPreview() {
         <footer className="text-center text-sm text-muted-foreground">
           <p>
             &copy; {new Date().getFullYear()}{" "}
-            {companyData ? companyData.name : "N/A"}. All rights reserved.
+            {companyData ? companyData.name : <span>N/A</span>}. All rights
+            reserved.
           </p>
         </footer>
       </div>

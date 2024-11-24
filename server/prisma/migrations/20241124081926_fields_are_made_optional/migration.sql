@@ -1,0 +1,20 @@
+-- AlterTable
+ALTER TABLE `company` MODIFY `industry` VARCHAR(191) NULL,
+    MODIFY `bio` VARCHAR(191) NULL,
+    MODIFY `website` VARCHAR(191) NULL,
+    MODIFY `linkedIn` VARCHAR(191) NULL,
+    MODIFY `instagram` VARCHAR(191) NULL,
+    MODIFY `zip` VARCHAR(191) NULL,
+    MODIFY `country` VARCHAR(191) NULL,
+    MODIFY `city` VARCHAR(191) NULL,
+    MODIFY `state` VARCHAR(191) NULL,
+    MODIFY `startDate` DATETIME(3) NULL;
+
+-- AlterTable
+ALTER TABLE `personaldata` MODIFY `dob` DATETIME(3) NULL,
+    MODIFY `street` VARCHAR(191) NULL,
+    MODIFY `city` VARCHAR(191) NULL,
+    MODIFY `state` VARCHAR(191) NULL,
+    MODIFY `zipCode` VARCHAR(191) NULL,
+    MODIFY `country` VARCHAR(191) NULL,
+    MODIFY `phone` VARCHAR(191) NULL;

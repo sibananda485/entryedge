@@ -6,6 +6,8 @@ import { companyRouter } from "./routes/company";
 import { personalDataRouter } from "./routes/personal";
 import { educationRouter } from "./routes/education";
 import { experienceRouter } from "./routes/experience";
+import { jobRouter } from "./routes/job";
+import { savedJobRouter } from "./routes/savedJob";
 
 declare global {
   namespace Express {
@@ -15,9 +17,7 @@ declare global {
   }
 }
 
-export const prisma = new PrismaClient({
-  log: ["query"],
-});
+export const prisma = new PrismaClient();
 
 const app = express();
 app.use(cors());
@@ -29,11 +29,14 @@ app.use(express.json());
 app.get("/", (req: Request, res: Response) => {
   res.send("JAY JAGANNATH");
 });
+
 app.use("/api/auth", authRouter);
 app.use("/api/company", companyRouter);
 app.use("/api/personal", personalDataRouter);
 app.use("/api/education", educationRouter);
 app.use("/api/experience", experienceRouter);
+app.use("/api/job", jobRouter);
+app.use("/api/saved-job", savedJobRouter);
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);

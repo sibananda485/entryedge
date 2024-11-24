@@ -15,6 +15,11 @@ import Profile from "./features/profile/Profile";
 import Education from "./features/education/Education";
 import Experience from "./features/experience/Experience";
 import Personal from "./features/personal/Personal";
+import Post from "./features/post/Post";
+import SignUp from "./pages/SignUp";
+import NotFound from "./pages/NotFound";
+import logo from "@/assets/banner3.png";
+import { Loader } from "lucide-react";
 
 axios.interceptors.request.use(
   (config) => {
@@ -38,7 +43,7 @@ axios.interceptors.response.use(
       error.response.data.message == "Invaid Token"
     ) {
       // Handle token expiration or unauthorized access
-      console.log("Unauthorized! Redirecting to login...");
+
       localStorage.removeItem("token"); // Clear the token
       window.location.href = "/"; // Redirect to login page
     }
@@ -56,7 +61,19 @@ function App() {
   }, [dispatch, token]);
 
   if (loading) {
-    return <p>Loading...</p>;
+    return (
+      <div className="w-screen h-screen flex justify-center">
+        <div className="flex flex-col items-center mt-32">
+          <img src={logo} alt="" className="dark:invert w-72" />
+          <p className="text-muted-foreground mb-2">
+            Hang on we are getting cool jobs for you{" "}
+          </p>
+          <div className="flex gap-2 items-center">
+            <Loader className="animate-spin" /> Loading . . .
+          </div>
+        </div>
+      </div>
+    );
   }
   return <RouterProvider router={router} />;
 }
@@ -103,7 +120,7 @@ const router = createBrowserRouter(
           path: "/post",
           element: (
             <AdminProtected>
-              <p>POST</p>
+              <Post />
             </AdminProtected>
           ),
         },
@@ -160,6 +177,14 @@ const router = createBrowserRouter(
     {
       path: "/login",
       element: <Login />,
+    },
+    {
+      path: "/signup",
+      element: <SignUp />,
+    },
+    {
+      path: "/*",
+      element: <NotFound />,
     },
   ],
   {

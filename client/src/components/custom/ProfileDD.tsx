@@ -34,6 +34,7 @@ import {
 import { useAppDispatch, useAppSelector } from "@/app/hooks";
 import {
   fetchUserData,
+  selectEmail,
   selectIsLoggedIn,
   selectRole,
 } from "@/features/auth/authSlice";
@@ -44,6 +45,7 @@ export function ProfileDD() {
   const { toast } = useToast();
   const dispatch = useAppDispatch();
   const isLoggedIn = useAppSelector(selectIsLoggedIn);
+  const email = useAppSelector(selectEmail);
   const role = useAppSelector(selectRole);
 
   const handleSignOut = async () => {
@@ -66,7 +68,7 @@ export function ProfileDD() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56">
-        <DropdownMenuLabel>My Account</DropdownMenuLabel>
+        <DropdownMenuLabel>{email}</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           {role == "ADMIN" ? (
@@ -86,7 +88,7 @@ export function ProfileDD() {
               </DropdownMenuItem>
             </Link>
           )}
-          <DropdownMenuItem>
+          {/* <DropdownMenuItem>
             <CreditCard />
             <span>Billing</span>
             <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
@@ -100,10 +102,10 @@ export function ProfileDD() {
             <Keyboard />
             <span>Keyboard shortcuts</span>
             <DropdownMenuShortcut>⌘K</DropdownMenuShortcut>
-          </DropdownMenuItem>
+          </DropdownMenuItem> */}
         </DropdownMenuGroup>
-        <DropdownMenuSeparator />
-        <DropdownMenuGroup>
+        {/* <DropdownMenuSeparator /> */}
+        {/* <DropdownMenuGroup>
           <DropdownMenuItem>
             <Users />
             <span>Team</span>
@@ -136,9 +138,9 @@ export function ProfileDD() {
             <span>New Team</span>
             <DropdownMenuShortcut>⌘+T</DropdownMenuShortcut>
           </DropdownMenuItem>
-        </DropdownMenuGroup>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem>
+        </DropdownMenuGroup> */}
+        {/* <DropdownMenuSeparator /> */}
+        {/* <DropdownMenuItem>
           <Github />
           <span>GitHub</span>
         </DropdownMenuItem>
@@ -149,8 +151,8 @@ export function ProfileDD() {
         <DropdownMenuItem disabled>
           <Cloud />
           <span>API</span>
-        </DropdownMenuItem>
-        <DropdownMenuSeparator />
+        </DropdownMenuItem> */}
+        {/* <DropdownMenuSeparator /> */}
         <DropdownMenuItem onClick={handleSignOut}>
           <LogOut />
           <span>Log out</span>
