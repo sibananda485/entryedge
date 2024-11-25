@@ -38,16 +38,23 @@ import {
 } from "../savedJob/savedJobSlice";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
+import {
+  createAppliedJob,
+  selectAppliedJobData,
+} from "../appliedJobs/appliedJobSlice";
 
 export const JobDetailsCard = () => {
   const { toast } = useToast();
   const [onGoing, setOnGoing] = useState(false);
+  const [isApplying, setIsAppling] = useState(false);
   const dispatch = useAppDispatch();
   const loading = useAppSelector(selectJobLoadingById);
   const error = useAppSelector(selectJobErrorById);
   const data = useAppSelector(selectJobDataById);
   const savedJobs = useAppSelector(selectSavedJobData);
+  const appliedJobs = useAppSelector(selectAppliedJobData);
   const isJobSaved = savedJobs?.some((job) => job.id === data?.id);
+  const isJobApplied = appliedJobs?.some((job) => job.jobId === data?.id);
 
   const handleAdd = async () => {
     if (data) {
@@ -89,6 +96,25 @@ export const JobDetailsCard = () => {
     }
   };
 
+  const handleApply = async () => {
+    if (data) {
+      setIsAppling(true);
+      try {
+        await dispatch(createAppliedJob(data?.id)).unwrap();
+        toast({
+          title: "Job applied successfully",
+        });
+      } catch (error) {
+        toast({
+          variant: "destructive",
+          title: "Failed to appliy job",
+          description: "Please try again",
+        });
+      } finally {
+        setIsAppling(false);
+      }
+    }
+  };
   if (loading) {
     return <JobDetailsCardSkeleton />;
   }
@@ -216,7 +242,22 @@ export const JobDetailsCard = () => {
             <BookmarkIcon className="mr-2 h-4 w-4" />
             Save for Later
           </Button>
-          <Button className="w-[48%]">Apply Now</Button>
+          <Button
+            disabled={isJobApplied}
+            onClick={() => handleApply()}
+            className="w-[48%]"
+          >
+            {isJobApplied ? (
+              "Applied"
+            ) : isApplying ? (
+              <>
+                <Loader />
+                Appling...
+              </>
+            ) : (
+              "Apply Now"
+            )}
+          </Button>
         </CardFooter>
       </ScrollArea>
     </Card>

@@ -20,6 +20,8 @@ import SignUp from "./pages/SignUp";
 import NotFound from "./pages/NotFound";
 import logo from "@/assets/banner3.png";
 import { Loader } from "lucide-react";
+import { BASE_URL } from "./lib/constants";
+import AppliedJob from "./features/appliedJobs/AppliedJob";
 
 axios.interceptors.request.use(
   (config) => {
@@ -56,8 +58,14 @@ function App() {
   const loading = useAppSelector(selectAuthLoading);
   const token = localStorage.getItem("token");
 
+  const getApplication = async () => {
+    const { data } = await axios.get(BASE_URL + "/jobapplication");
+    console.log(data);
+  };
+
   useEffect(() => {
     dispatch(fetchUserData(token));
+    getApplication();
   }, [dispatch, token]);
 
   if (loading) {
@@ -104,7 +112,7 @@ const router = createBrowserRouter(
           path: "/my-application",
           element: (
             <UserProtected>
-              <p>My Application</p>
+              <AppliedJob />
             </UserProtected>
           ),
         },

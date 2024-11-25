@@ -90,27 +90,28 @@ model Experience {
 }
 
 model PersonalData {
-  id         Int       @id @default(autoincrement())
-  firstName  String
-  middleName String?
-  lastName   String
-  dob        DateTime?
-  street     String?
-  country    String?
-  phone      String?
-  city       String?
-  state      String?
-  zipCode    String?
-  bio        String?
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
-  User       User      @relation(fields: [userId], references: [id])
-  userId     Int       @unique
-  savedJob   Job[]
+  id             Int              @id @default(autoincrement())
+  firstName      String
+  middleName     String?
+  lastName       String
+  dob            DateTime?
+  street         String?
+  country        String?
+  phone          String?
+  city           String?
+  state          String?
+  zipCode        String?
+  bio            String?
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  User           User             @relation(fields: [userId], references: [id])
+  userId         Int              @unique
+  savedJob       Job[]
+  JobApplication JobApplication[]
 }
 
 model Job {
-  id               Int            @id @default(autoincrement())
+  id               Int              @id @default(autoincrement())
   title            String
   location         String
   salaryMin        String
@@ -120,12 +121,25 @@ model Job {
   education        String
   deadline         DateTime
   skills           String
-  jd               String         @db.VarChar(1000)
-  qualification    String         @db.VarChar(1000)
-  responsibilities String         @db.VarChar(1000)
-  createdAt        DateTime       @default(now())
-  updatedAt        DateTime       @updatedAt
-  Company          Company        @relation(fields: [companyId], references: [id])
+  jd               String           @db.VarChar(1000)
+  qualification    String           @db.VarChar(1000)
+  responsibilities String           @db.VarChar(1000)
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+  Company          Company          @relation(fields: [companyId], references: [id])
   companyId        Int
   PersonalData     PersonalData[]
+  JobApplication   JobApplication[]
+}
+
+model JobApplication {
+  id             Int          @id @default(autoincrement())
+  jobId          Int
+  personalDataId Int
+  job            Job          @relation(fields: [jobId], references: [id])
+  status         String       @default("pending")
+  remarks        String?
+  personalData   PersonalData @relation(fields: [personalDataId], references: [id])
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
 }

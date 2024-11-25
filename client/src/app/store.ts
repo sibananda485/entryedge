@@ -6,6 +6,7 @@ import educationReducer from "../features/education/educationSlice";
 import personalReducer from "../features/personal/personalSlice";
 import jobReducer from "../features/jobs/jobSlice";
 import savedJobReducer from "../features/savedJob/savedJobSlice";
+import appliedJobReducer from "../features/appliedJobs/appliedJobSlice";
 
 export const store = configureStore({
   reducer: {
@@ -16,6 +17,7 @@ export const store = configureStore({
     personal: personalReducer,
     job: jobReducer,
     savedJob: savedJobReducer,
+    appliedJob: appliedJobReducer,
   },
 });
 

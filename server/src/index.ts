@@ -8,6 +8,7 @@ import { educationRouter } from "./routes/education";
 import { experienceRouter } from "./routes/experience";
 import { jobRouter } from "./routes/job";
 import { savedJobRouter } from "./routes/savedJob";
+import { jobApplicationRouter } from "./routes/jobApplication";
 
 declare global {
   namespace Express {
@@ -37,6 +38,7 @@ app.use("/api/education", educationRouter);
 app.use("/api/experience", experienceRouter);
 app.use("/api/job", jobRouter);
 app.use("/api/saved-job", savedJobRouter);
+app.use("/api/jobapplication", jobApplicationRouter);
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
