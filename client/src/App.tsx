@@ -8,7 +8,11 @@ import axios from "axios";
 import SavedJob from "./features/savedJob/SavedJob";
 import UserProtected from "./components/wrapper/UserProtected";
 import { useAppDispatch, useAppSelector } from "./app/hooks";
-import { fetchUserData, selectAuthLoading } from "./features/auth/authSlice";
+import {
+  fetchUserData,
+  selectAuthLoading,
+  selectIsLoggedIn,
+} from "./features/auth/authSlice";
 import AdminProtected from "./components/wrapper/AdminProtected";
 import { CompanyTab } from "./features/company/CompanyTab";
 import Profile from "./features/profile/Profile";
@@ -56,6 +60,7 @@ axios.interceptors.response.use(
 function App() {
   const dispatch = useAppDispatch();
   const loading = useAppSelector(selectAuthLoading);
+  const isLoggedIn = useAppSelector(selectIsLoggedIn);
   const token = localStorage.getItem("token");
 
   const getApplication = async () => {
@@ -66,7 +71,7 @@ function App() {
   useEffect(() => {
     dispatch(fetchUserData(token));
     getApplication();
-  }, [dispatch, token]);
+  }, [dispatch, token, isLoggedIn]);
 
   if (loading) {
     return (

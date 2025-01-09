@@ -39,7 +39,7 @@ import {
   selectRole,
 } from "@/features/auth/authSlice";
 import { useToast } from "@/hooks/use-toast";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export function ProfileDD() {
   const { toast } = useToast();
@@ -47,10 +47,12 @@ export function ProfileDD() {
   const isLoggedIn = useAppSelector(selectIsLoggedIn);
   const email = useAppSelector(selectEmail);
   const role = useAppSelector(selectRole);
+  const navigate = useNavigate();
 
   const handleSignOut = async () => {
     localStorage.removeItem("token");
-    await dispatch(fetchUserData(localStorage.getItem("token"))).unwrap();
+    dispatch({ type: "LOGOUT" });
+    navigate("/");
     toast({
       title: "Logout Successfully",
       duration: 1000,
