@@ -9,14 +9,8 @@ import { experienceRouter } from "./routes/experience";
 import { jobRouter } from "./routes/job";
 import { savedJobRouter } from "./routes/savedJob";
 import { jobApplicationRouter } from "./routes/jobApplication";
-import fs from "fs";
-// const fs = require('fs');
-fs.readFile("./test.xlsx", "utf-8", (err, data) => {
-  if (err) {
-    console.log(err);
-  }
-  console.log(data);
-});
+export const prisma = new PrismaClient();
+const PORT = process.env.PORT || 3000;
 
 declare global {
   namespace Express {
@@ -26,13 +20,10 @@ declare global {
   }
 }
 
-export const prisma = new PrismaClient();
 
 const app = express();
+
 app.use(cors());
-
-const PORT = process.env.PORT || 3000;
-
 app.use(express.json());
 
 app.get("/", (req: Request, res: Response) => {
