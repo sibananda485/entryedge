@@ -91,11 +91,21 @@ export default function Login() {
       }
     }
   }
+
   if (isLoggedIn) {
     return <Navigate to="/" />;
   }
   return (
     <div className="mt-10">
+      {/* <Button
+        onClick={() =>
+          socket.emit("hello", () => {
+            console.log("CONNECTED");
+          })
+        }
+      >
+        CLick
+      </Button> */}
       <div className="flex items-center w-fit mx-auto gap-3">
         <img src={Banner} alt="" className="w-20 dark:invert " />
         <div>

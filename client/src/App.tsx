@@ -26,6 +26,8 @@ import logo from "@/assets/banner3.png";
 import { Loader } from "lucide-react";
 import { BASE_URL } from "./lib/constants";
 import AppliedJob from "./features/appliedJobs/AppliedJob";
+import AuthProtected from "./components/wrapper/AuthProtected";
+import Chat from "./features/chats/Chat";
 
 axios.interceptors.request.use(
   (config) => {
@@ -65,12 +67,11 @@ function App() {
 
   const getApplication = async () => {
     const { data } = await axios.get(BASE_URL + "/jobapplication");
-    console.log(data);
   };
 
   useEffect(() => {
     dispatch(fetchUserData(token));
-    getApplication();
+    isLoggedIn && getApplication();
   }, [dispatch, token, isLoggedIn]);
 
   if (loading) {
@@ -93,12 +94,12 @@ function App() {
 
 function Layout() {
   return (
-    <>
+    <div className="flex flex-col min-h-screen">
       <Navbar />
-      <div className="px-2">
-        <Outlet />
-      </div>
-    </>
+      {/* <div className="px-2 grow"> */}
+      <Outlet />
+      {/* </div> */}
+    </div>
   );
 }
 
@@ -183,6 +184,14 @@ const router = createBrowserRouter(
             <UserProtected>
               <Experience />
             </UserProtected>
+          ),
+        },
+        {
+          path: "/chat",
+          element: (
+            <AuthProtected>
+              <Chat />
+            </AuthProtected>
           ),
         },
       ],

@@ -69,7 +69,7 @@ const Navbar = () => {
             {isLoggedIn ? (
               <>
                 <Button variant="ghost" size="icon">
-                  <Link to="/test">
+                  <Link to="/chat">
                     <MessageSquareText className="fill-current w-10 h-10" />
                   </Link>
                 </Button>
