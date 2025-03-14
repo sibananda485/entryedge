@@ -11,9 +11,32 @@ import { savedJobRouter } from "./routes/savedJob";
 import { jobApplicationRouter } from "./routes/jobApplication";
 import { createServer } from "node:http";
 import { Server } from "socket.io";
+import { candidateRouter } from "./routes/candidate";
+import { messageRouter } from "./routes/message";
+import os from "os";
 
 export const prisma = new PrismaClient();
 const PORT = process.env.PORT || 3000;
+
+// Function to get local IP address
+function getLocalIpAddress() {
+  const interfaces = os.networkInterfaces();
+  for (const name of Object.keys(interfaces)) {
+    const networkInterface = interfaces[name];
+    // Check if the interface exists
+    if (networkInterface) {
+      for (const iface of networkInterface) {
+        // Skip over non-IPv4 and internal (loopback) addresses
+        if (iface.family === "IPv4" && !iface.internal) {
+          return iface.address;
+        }
+      }
+    }
+  }
+  return "0.0.0.0"; // Default fallback
+}
+
+const LOCAL_IP = getLocalIpAddress();
 
 declare global {
   namespace Express {
@@ -27,24 +50,34 @@ const app = express();
 const server = createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:5173", // Your React/frontend port
+    origin: ["http://localhost:5173", `http://${LOCAL_IP}:5173`], // Allow both localhost and local IP
     methods: ["GET", "POST"],
     credentials: true,
   },
 });
 
 io.on("connection", (socket) => {
-  console.log("Client connected", socket.id);
-
-  socket.on("hello", (data) => {
-    console.log("Received:", data);
+  socket.on("joinRoom", (roomId) => {
+    socket.join(roomId);
   });
-  // setInterval(() => {
-  //   socket.emit("send", "Hii from server");
-  // }, 2000);
+  socket.on("sendMessage", async (data) => {
+    const message = await prisma.messages.create({
+      data: {
+        receiverId: +data.receiverId,
+        senderId: +data.senderId,
+        message: data.message,
+      },
+    });
+    socket.to(data.roomId).emit("receiveMessage", data.message);
+  });
 });
 
-app.use(cors());
+app.use(
+  cors({
+    origin: ["http://localhost:5173", `http://${LOCAL_IP}:5173`], // Allow both localhost and local IP
+    credentials: true,
+  })
+);
 app.use(express.json());
 
 app.get("/", (req: Request, res: Response) => {
@@ -59,7 +92,12 @@ app.use("/api/experience", experienceRouter);
 app.use("/api/job", jobRouter);
 app.use("/api/saved-job", savedJobRouter);
 app.use("/api/jobapplication", jobApplicationRouter);
+app.use("/api/candidate", candidateRouter);
+app.use("/api/messages", messageRouter);
 
-server.listen(PORT, () => {
+// Listen on all interfaces (0.0.0.0) instead of just localhost
+// For TypeScript, we need to use a slightly different approach
+server.listen(Number(PORT), () => {
   console.log(`Server is running on http://localhost:${PORT}`);
+  console.log(`Server is also accessible at http://${LOCAL_IP}:${PORT}`);
 });

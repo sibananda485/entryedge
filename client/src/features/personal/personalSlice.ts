@@ -3,7 +3,7 @@ import { BASE_URL } from "@/lib/constants";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
-interface Personal {
+export interface Personal {
   id: string;
   firstName: string;
   middleName: string;

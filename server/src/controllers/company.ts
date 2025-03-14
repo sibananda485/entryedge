@@ -9,6 +9,33 @@ export const handleGetCompany = async (req: Request, res: Response) => {
   });
   res.json(company);
 };
+
+export const handleGetAllCompany = async (req: Request, res: Response) => {
+  const user = req.user;
+  const companies = await prisma.company.findMany({
+    select: {
+      id: true,
+      name: true,
+      userId: true,
+    },
+  });
+  const companyWithLastMessage = await Promise.all(
+    companies.map(async (candidate) => {
+      const message = await prisma.messages.findFirst({
+        where: {
+          OR: [
+            { senderId: user?.id, receiverId: candidate.userId },
+            { senderId: candidate.userId, receiverId: user?.id },
+          ],
+        },
+        orderBy: { createdAt: "desc" },
+      });
+
+      return { ...candidate, lastMessage: message };
+    })
+  );
+  res.json(companyWithLastMessage);
+};
 export const handleUpdateCompany = async (req: Request, res: Response) => {
   try {
     CompanySchema.parse(req.body);

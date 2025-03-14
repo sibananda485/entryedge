@@ -24,10 +24,10 @@ import SignUp from "./pages/SignUp";
 import NotFound from "./pages/NotFound";
 import logo from "@/assets/banner3.png";
 import { Loader } from "lucide-react";
-import { BASE_URL } from "./lib/constants";
 import AppliedJob from "./features/appliedJobs/AppliedJob";
 import AuthProtected from "./components/wrapper/AuthProtected";
 import Chat from "./features/chats/Chat";
+import Room from "./features/chats/Room";
 
 axios.interceptors.request.use(
   (config) => {
@@ -65,13 +65,8 @@ function App() {
   const isLoggedIn = useAppSelector(selectIsLoggedIn);
   const token = localStorage.getItem("token");
 
-  const getApplication = async () => {
-    const { data } = await axios.get(BASE_URL + "/jobapplication");
-  };
-
   useEffect(() => {
     dispatch(fetchUserData(token));
-    isLoggedIn && getApplication();
   }, [dispatch, token, isLoggedIn]);
 
   if (loading) {
@@ -96,9 +91,9 @@ function Layout() {
   return (
     <div className="flex flex-col min-h-screen">
       <Navbar />
-      {/* <div className="px-2 grow"> */}
-      <Outlet />
-      {/* </div> */}
+      <div className="px-2 grow">
+        <Outlet />
+      </div>
     </div>
   );
 }
@@ -193,6 +188,12 @@ const router = createBrowserRouter(
               <Chat />
             </AuthProtected>
           ),
+          children: [
+            {
+              path: "/chat/:id",
+              element: <Room />,
+            },
+          ],
         },
       ],
     },

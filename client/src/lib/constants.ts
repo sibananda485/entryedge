@@ -1,4 +1,7 @@
-export const BASE_URL = "http://localhost:3000/api";
+// export const BASE_URL = "http://localhost:3000/api";
+// export const SOCKET_URL = "http://localhost:3000";
+export const BASE_URL = "http://192.168.0.103:3000/api";
+export const SOCKET_URL = "http://192.168.0.103:3000";
 interface Nav {
   label: string;
   path: string;

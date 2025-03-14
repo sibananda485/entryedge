@@ -1,171 +1,159 @@
-import { io } from "socket.io-client";
 import { useEffect, useState } from "react";
-import { Building, SendHorizontal } from "lucide-react";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { Building, UserRound } from "lucide-react";
+import axios from "axios";
+import { BASE_URL } from "@/lib/constants";
+import { Company } from "../company/companySlice";
+import { Link, Outlet, useParams } from "react-router-dom";
+import { useAppSelector } from "@/app/hooks";
+import { selectRole, selectUser } from "../auth/authSlice";
+import { Personal } from "../personal/personalSlice";
+import NoMessage from "@/assets/noMessage.svg";
+import { Messages } from "./Room";
 
-import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Textarea } from "@/components/ui/textarea";
-import { useToast } from "@/hooks/use-toast";
+interface CandidateStack extends Personal {
+  lastMessage: Messages;
+}
 
-const FormSchema = z.object({
-  bio: z
-    .string()
-    .min(10, {
-      message: "Bio must be at least 10 characters.",
-    })
-    .max(160, {
-      message: "Bio must not be longer than 30 characters.",
-    }),
-});
-
-// const messages = [
-//   {
-//     text: "Hello",
-//     mine: true,
-//     time: "08:17 PM",
-//   },
-//   {
-//     text: "How are you ?",
-//     mine: false,
-//     time: "08:26 PM",
-//   },
-// ];
+interface CompanyStack extends Company {
+  lastMessage: Messages;
+}
 
 export default function Chat() {
-  const [socket, setSocket] = useState();
-  const [messages, setMessages] = useState([
-    {
-      text: "Hello",
-      mine: true,
-      time: "08:17 PM",
-    },
-    {
-      text: "How are you ?",
-      mine: false,
-      time: "08:26 PM",
-    },
-  ]);
-  const form = useForm<z.infer<typeof FormSchema>>({
-    resolver: zodResolver(FormSchema),
-  });
-  function onSubmit(data: z.infer<typeof FormSchema>) {
-    console.log(data);
-  }
+  const role = useAppSelector(selectRole);
+  const userId = useAppSelector(selectUser)?.id;
+
+  const { id } = useParams();
+  const [companyList, setCompanyList] = useState<CompanyStack[]>([]);
+  const [candidateList, setCandidateList] = useState<CandidateStack[]>([]);
+
+  const getCompanyList = async () => {
+    const { data } = await axios.get(BASE_URL + "/company/all");
+    setCompanyList(data);
+  };
+
+  const getCandidateList = async () => {
+    const { data } = await axios.get(BASE_URL + "/candidate");
+    setCandidateList(data);
+  };
+
   useEffect(() => {
-    const s = io("http://localhost:3000");
-    setSocket(s);
-    s.emit("connection", () => {
-      console.log("CONNECTED");
-    });
-    s.on("send", (res) => {
-      setMessages((prev) => [
-        ...prev,
-        {
-          mine: false,
-          text: res,
-          time: new Date().toLocaleTimeString(),
-        },
-      ]);
-    });
+    role == "USER" ? getCompanyList() : getCandidateList();
   }, []);
+
   return (
-    <div className="h-full py-2 grow max-w-6xl w-full mx-auto grid grid-cols-12 gap-5">
-      <div className="col-span-4 border rounded-lg p-2">
+    <div
+      className={`h-full py-2 grow max-w-6xl w-full mx-auto sm:grid grid-cols-12 gap-5`}
+    >
+      <div
+        className={`${
+          id ? "hidden sm:block" : ""
+        } col-span-4 border rounded-lg p-2`}
+      >
         <div>
           <p className="font-bold text-xl">Messages</p>
         </div>
-        <div className="my-4 divide-y-2">
-          <div className="flex items-start gap-2 py-4 border-s-4 border-foreground ps-2">
-            <Building className="mt-2" />
-            <div className="w-full">
-              <div className="flex justify-between items-center">
-                <p className="truncate">Mind Space Technology</p>{" "}
-                <p className="text-muted-foreground text-xs">22 Dec 2024</p>
-              </div>
-              <p className="text-muted-foreground">Hii,Any updates ?</p>
-            </div>
-          </div>
-          {Array.from({ length: 5 }).map((_, i) => (
-            <div
-              key={i}
-              className="flex items-start gap-2 py-4 border-s-4 border-transparent ps-2"
-            >
-              <Building className="mt-2" />
-              <div className="w-full">
-                <div className="flex justify-between items-center">
-                  <p className="truncate">Mind Space Technology</p>{" "}
-                  <p className="text-muted-foreground text-xs">22 Dec 2024</p>
-                </div>
-                <p className="text-muted-foreground">Hii,Any updates ?</p>
-              </div>
-            </div>
-          ))}
+        <div className="my-4 divide-y-">
+          {role == "USER"
+            ? companyList.map((company, i) => (
+                <Link
+                  to={"/chat/" + company.userId}
+                  key={i}
+                  className={`flex items-start gap-2 py-4 border-s-4 ps-2 pe-1 ${
+                    company.userId == id
+                      ? "border-foreground bg-muted"
+                      : "border-transparent"
+                  } `}
+                >
+                  <Building className="mt-2" />
+                  <div className="w-full">
+                    <div className="flex justify-between items-center">
+                      <p className="truncate">{company.name}</p>{" "}
+                      <p className="text-muted-foreground text-xs">
+                        {company.lastMessage &&
+                          new Date(
+                            company.lastMessage?.createdAt
+                          ).toLocaleTimeString("en-US", {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                            hour12: true, // Enables AM/PM format
+                          })}
+                      </p>
+                    </div>
+                    <p className="text-muted-foreground">
+                      {company.lastMessage ? (
+                        company.lastMessage.senderId == userId ? (
+                          <span className="italic">
+                            You : {company.lastMessage.message}
+                          </span>
+                        ) : (
+                          <span className="italic truncate w-10">
+                            {company.name} : {company.lastMessage.message}
+                          </span>
+                        )
+                      ) : (
+                        "Send a message"
+                      )}
+                    </p>
+                  </div>
+                </Link>
+              ))
+            : candidateList.map((candidate, i) => (
+                <Link
+                  to={"/chat/" + candidate.userId}
+                  key={i}
+                  className={`flex items-start gap-2 py-4 border-s-4 ps-2 pe-1 ${
+                    candidate.userId == id
+                      ? "border-foreground bg-muted"
+                      : "border-transparent"
+                  } `}
+                >
+                  <UserRound className="mt-2" />
+                  <div className="w-full">
+                    <div className="flex justify-between items-center">
+                      <p className="truncate">
+                        {candidate.firstName} {candidate.middleName}{" "}
+                        {candidate.lastName}
+                      </p>{" "}
+                      <p className="text-muted-foreground text-xs">
+                        {candidate.lastMessage &&
+                          new Date(
+                            candidate.lastMessage.createdAt
+                          ).toLocaleTimeString("en-US", {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                            hour12: true, // Enables AM/PM format
+                          })}
+                      </p>
+                    </div>
+                    <p className="text-muted-foreground">
+                      {candidate.lastMessage ? (
+                        candidate.lastMessage?.senderId == userId ? (
+                          <span className="italic">
+                            You : {candidate.lastMessage.message}
+                          </span>
+                        ) : (
+                          <span className="italic">
+                            {candidate.firstName} :{" "}
+                            {candidate.lastMessage.message}
+                          </span>
+                        )
+                      ) : (
+                        "Send a message"
+                      )}
+                    </p>
+                  </div>
+                </Link>
+              ))}
         </div>
       </div>
-      <div className="h-full border col-span-8 rounded-lg flex flex-col p-2">
-        <div>Mind Space Technology</div>
-        <div className="grow my-2 space-y-2">
-          <div className="max-h-full overflow-y-auto flex flex-col justify-end ">
-            {messages.map((a, i) => (
-              <div key={i} className={`w-fit ${a.mine && "ms-auto"}`}>
-                <p
-                  className={`relative bg-foreground text-background w-fit py-1 px-5  ${
-                    a.mine ? "rounded-s-md" : "rounded-e-md"
-                  }`}
-                >
-                  {a.text}
-                </p>
-                <p
-                  className={`text-xs text-muted-foreground ${
-                    a.mine && "text-end"
-                  }`}
-                >
-                  {a.time}
-                </p>
-              </div>
-            ))}
-             
-          </div>
+      {!id && (
+        <div className="hidden h-full border col-span-8 rounded-lg sm:flex flex-col items-center justify-center p-2">
+          <img src={NoMessage} className="w-72" alt="" />
+          <p className="text-2xl font-bold">No Message</p>
         </div>
-        <div>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="flex gap-2">
-              <FormField
-                control={form.control}
-                name="bio"
-                render={({ field }) => (
-                  <FormItem className="w-full">
-                    <FormControl>
-                      <Textarea
-                        placeholder="Write your message..."
-                        className="resize-none"
-                        {...field}
-                        rows={2}
-                      />
-                    </FormControl>
+      )}
 
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <Button type="submit" className="min-h-full h-20 w-20">
-                <SendHorizontal size={128} />
-              </Button>
-            </form>
-          </Form>
-        </div>
-      </div>
+      <Outlet />
     </div>
   );
 }

@@ -4,9 +4,7 @@ export const PersonalSchema = z.object({
   firstName: z
     .string()
     .min(2, { message: "First name must be at least 2 characters." }),
-  middleName: z
-    .string()
-    .min(2, { message: "Middle name must be at least 2 characters." }),
+  middleName: z.string(),
   lastName: z
     .string()
     .min(2, { message: "Last name must be at least 2 characters." }),

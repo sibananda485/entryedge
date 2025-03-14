@@ -3,7 +3,7 @@ import { BASE_URL } from "@/lib/constants";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
-interface Company {
+export interface Company {
   id: string;
   name: string;
   industry: string;
