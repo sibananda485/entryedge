@@ -8,7 +8,7 @@ import {
 } from "./features/auth/authSlice";
 import logo from "@/assets/banner3.png";
 import { Loader } from "lucide-react";
-import { router } from "./routes";
+import { router } from "./Routes";
 import "@/lib/axios";
 
 function App() {

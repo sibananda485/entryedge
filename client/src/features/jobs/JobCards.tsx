@@ -61,7 +61,7 @@ export const JobCards = () => {
   }
   return (
     <div className="space-y-3">
-      {data?.map((job) => {
+      {[...data, ...data, ...data, ...data, ...data, ...data]?.map((job) => {
         return (
           <Card
             key={job.id}
@@ -69,33 +69,38 @@ export const JobCards = () => {
             onClick={() => handleGetJobDetails(job.id)}
           >
             <CardHeader>
-              <CardTitle>{job.title}</CardTitle>
+              <CardTitle className="text-xl sm:text-base">
+                {job.title}
+              </CardTitle>
               <CardDescription>{job.Company.name}</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="grid w-full items-center gap-4">
+              <div className="grid w-full items-center gap-1 sm:gap-4">
                 <div className="flex items-center space-x-2">
                   <MapPinIcon className="h-4 w-4 text-muted-foreground" />
                   <span>{job.location}</span>
                 </div>
-                <div className="flex items-center space-x-2">
+                <div className="hidden sm:flex items-center space-x-2">
                   <CurrencyDollarIcon className="h-4 w-4 text-muted-foreground" />
                   <span>
                     ${job.salaryMin} - {job.salaryMax} / year
                   </span>
                 </div>
-                <div className="flex items-center space-x-2">
+                <div className="hidden sm:flex items-center space-x-2">
                   <BriefcaseIcon className="h-4 w-4 text-muted-foreground" />
                   <span>{job.employmentType}</span>
                 </div>
-                <div className="flex items-center space-x-2">
+                <div className="hidden sm:flex items-center space-x-2">
                   <CalendarIcon className="h-4 w-4 text-muted-foreground" />
                   <span>Apply by: {format(job.deadline, "dd-mm-yyyy")}</span>
                 </div>
-                <div className="flex flex-wrap gap-2 mt-2">
+                <div className="hidden sm:flex flex-wrap gap-2 mt-2">
                   {job.skills.split(",").map((a, i) => (
                     <Badge key={i}>{a.trim()}</Badge>
                   ))}
+                </div>
+                <div className="flex sm:hidden flex-wrap gap-2 mt-2">
+                  <Badge>{job.employmentType}</Badge>
                 </div>
               </div>
             </CardContent>

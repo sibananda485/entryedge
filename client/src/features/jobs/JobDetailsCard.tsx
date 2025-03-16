@@ -129,7 +129,7 @@ export const JobDetailsCard = () => {
     );
   }
   return (
-    <Card className="sticky top-14 h-remaining-height col-span-2 overflow-auto">
+    <Card className="hidden sm:block sticky top-14 h-remaining-height col-span-2 overflow-auto">
       <ScrollArea className="h-full">
         <CardHeader className="sticky top-0 bg-background">
           <div className="flex justify-between items-start">

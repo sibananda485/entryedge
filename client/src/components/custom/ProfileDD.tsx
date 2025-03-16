@@ -63,34 +63,35 @@ export function ProfileDD() {
   }
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon">
-          <User className="fill-current w-10 h-10" />
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-56">
-        <DropdownMenuLabel>{email}</DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        <DropdownMenuGroup>
-          {role == "ADMIN" ? (
-            <Link to="/company">
-              <DropdownMenuItem>
-                <Building />
-                <span>Company profile</span>
-                <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
-              </DropdownMenuItem>
-            </Link>
-          ) : (
-            <Link to="/profile">
-              <DropdownMenuItem>
-                <User />
-                <span>Profile</span>
-                <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
-              </DropdownMenuItem>
-            </Link>
-          )}
-          {/* <DropdownMenuItem>
+    <div className="hidden sm:block">
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost" size="icon">
+            <User className="fill-current w-10 h-10" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent className="w-56">
+          <DropdownMenuLabel>{email}</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuGroup>
+            {role == "ADMIN" ? (
+              <Link to="/company">
+                <DropdownMenuItem>
+                  <Building />
+                  <span>Company profile</span>
+                  <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
+                </DropdownMenuItem>
+              </Link>
+            ) : (
+              <Link to="/profile">
+                <DropdownMenuItem>
+                  <User />
+                  <span>Profile</span>
+                  <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
+                </DropdownMenuItem>
+              </Link>
+            )}
+            {/* <DropdownMenuItem>
             <CreditCard />
             <span>Billing</span>
             <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
@@ -105,9 +106,9 @@ export function ProfileDD() {
             <span>Keyboard shortcuts</span>
             <DropdownMenuShortcut>⌘K</DropdownMenuShortcut>
           </DropdownMenuItem> */}
-        </DropdownMenuGroup>
-        {/* <DropdownMenuSeparator /> */}
-        {/* <DropdownMenuGroup>
+          </DropdownMenuGroup>
+          {/* <DropdownMenuSeparator /> */}
+          {/* <DropdownMenuGroup>
           <DropdownMenuItem>
             <Users />
             <span>Team</span>
@@ -141,8 +142,8 @@ export function ProfileDD() {
             <DropdownMenuShortcut>⌘+T</DropdownMenuShortcut>
           </DropdownMenuItem>
         </DropdownMenuGroup> */}
-        {/* <DropdownMenuSeparator /> */}
-        {/* <DropdownMenuItem>
+          {/* <DropdownMenuSeparator /> */}
+          {/* <DropdownMenuItem>
           <Github />
           <span>GitHub</span>
         </DropdownMenuItem>
@@ -154,13 +155,14 @@ export function ProfileDD() {
           <Cloud />
           <span>API</span>
         </DropdownMenuItem> */}
-        {/* <DropdownMenuSeparator /> */}
-        <DropdownMenuItem onClick={handleSignOut}>
-          <LogOut />
-          <span>Log out</span>
-          <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+          {/* <DropdownMenuSeparator /> */}
+          <DropdownMenuItem onClick={handleSignOut}>
+            <LogOut />
+            <span>Log out</span>
+            <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </div>
   );
 }

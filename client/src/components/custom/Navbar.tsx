@@ -17,19 +17,15 @@ const Navbar = () => {
     item.access.some((a) => a == role)
   );
   return (
-    <header className="sticky top-0 z-50 w-full border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-14 max-w-screen-2xl items-center px-10">
-        <div className="mr-4 hidden md:flex">
+    <header className="px-2 sm:px-0 sticky top-0 z-50 w-full border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="container flex h-14 max-w-screen-2xl items-center sm:px-10">
+        <div className="flex items-center">
           <Link to="/" className="mr-4 flex items-center space-x-2 lg:mr-6">
-            {/* <Handshake className="h-6 w-6 " /> */}
-
             <img src={logo} alt="" className="h-10 w-10 dark:invert" />
 
-            <span className="hidden font-bold text-lg lg:inline-block">
-              EntryEdge
-            </span>
+            <span className="font-bold text-lg">EntryEdge</span>
           </Link>
-          <nav className="flex items-center gap-4 lg:gap-6">
+          <nav className="hidden sm:flex items-center gap-4 lg:gap-6">
             {isLoggedIn ? (
               filteredNavData.map((a, i) => (
                 <Link
@@ -60,19 +56,16 @@ const Navbar = () => {
             )}
           </nav>
         </div>
-        {/* <MobileNav /> */}
-        <div className="flex flex-1 items-center justify-between space-x-2 md:justify-end">
-          {/* <div className="w-full flex-1 md:w-auto md:flex-none">
-            <CommandMenu />
-          </div> */}
-          <nav className="flex items-center">
+
+        <div className="flex flex-1 items-center justify-end space-x-2 md:justify-end">
+          <nav className=" flex items-center">
             {isLoggedIn ? (
               <>
-                <Button variant="ghost" size="icon">
-                  <Link to="/chat">
+                <Link className="hidden sm:block" to="/chat">
+                  <Button variant="ghost" size="icon">
                     <MessageSquareText className="fill-current w-10 h-10" />
-                  </Link>
-                </Button>
+                  </Button>
+                </Link>
                 <Button variant="ghost" size="icon">
                   <Link to="/test">
                     <Bell className="fill-current w-10 h-10" />

@@ -18,6 +18,7 @@ import { createBrowserRouter } from "react-router-dom";
 import UserProtected from "./components/wrapper/UserProtected";
 import SavedJob from "./features/savedJob/SavedJob";
 import Layout from "./components/layout/Layout";
+import { MyJobs } from "./tabs/MyJobs";
 
 export const router = createBrowserRouter(
   [
@@ -35,6 +36,14 @@ export const router = createBrowserRouter(
           element: (
             <UserProtected>
               <AppliedJob />
+            </UserProtected>
+          ),
+        },
+        {
+          path: "/my-jobs",
+          element: (
+            <UserProtected>
+              <MyJobs />
             </UserProtected>
           ),
         },

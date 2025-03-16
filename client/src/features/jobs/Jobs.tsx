@@ -43,9 +43,12 @@ export default function Jobs() {
     );
   }
   return (
-    <div className="max-w-6xl mx-auto grid grid-cols-3 gap-5">
-      <JobCards />
-      <JobDetailsCard />
+    <div>
+      <p className="sm:hidden">Jobs for you</p>
+      <div className="px-2 max-w-6xl mx-auto sm:grid grid-cols-3 gap-5">
+        <JobCards />
+        <JobDetailsCard />
+      </div>
     </div>
   );
 }
