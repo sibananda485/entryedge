@@ -61,7 +61,7 @@ export const JobCards = () => {
   }
   return (
     <div className="space-y-3">
-      {[...data, ...data, ...data, ...data, ...data, ...data]?.map((job) => {
+      {data?.map((job) => {
         return (
           <Card
             key={job.id}

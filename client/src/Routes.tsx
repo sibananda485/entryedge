@@ -19,6 +19,7 @@ import UserProtected from "./components/wrapper/UserProtected";
 import SavedJob from "./features/savedJob/SavedJob";
 import Layout from "./components/layout/Layout";
 import { MyJobs } from "./tabs/MyJobs";
+import Tasks from "./features/tasks/Tasks";
 
 export const router = createBrowserRouter(
   [
@@ -67,7 +68,7 @@ export const router = createBrowserRouter(
           path: "/applicant",
           element: (
             <AdminProtected>
-              <p>Applicant</p>
+              <Tasks />
             </AdminProtected>
           ),
         },
