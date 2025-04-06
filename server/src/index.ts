@@ -14,9 +14,18 @@ import { Server } from "socket.io";
 import { candidateRouter } from "./routes/candidate";
 import { messageRouter } from "./routes/message";
 import os from "os";
+import { resumeRouter } from "./routes/resume";
 
 export const prisma = new PrismaClient();
 const PORT = process.env.PORT || 3000;
+
+declare global {
+  namespace Express {
+    interface Request {
+      user?: User;
+    }
+  }
+}
 
 // Function to get local IP address
 function getLocalIpAddress() {
@@ -37,14 +46,6 @@ function getLocalIpAddress() {
 }
 
 const LOCAL_IP = getLocalIpAddress();
-
-declare global {
-  namespace Express {
-    interface Request {
-      user?: User;
-    }
-  }
-}
 
 const app = express();
 const server = createServer(app);
@@ -94,6 +95,7 @@ app.use("/api/saved-job", savedJobRouter);
 app.use("/api/jobapplication", jobApplicationRouter);
 app.use("/api/candidate", candidateRouter);
 app.use("/api/messages", messageRouter);
+app.use("/api/resume", resumeRouter);
 
 // Listen on all interfaces (0.0.0.0) instead of just localhost
 // For TypeScript, we need to use a slightly different approach
