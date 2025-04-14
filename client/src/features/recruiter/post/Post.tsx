@@ -25,7 +25,7 @@ import {
 import axios from "axios";
 import { BASE_URL } from "@/lib/constants";
 import { useToast } from "@/hooks/use-toast";
-import { fetchJobData } from "../jobs/jobSlice";
+import { fetchJobData } from "../../jobs/jobSlice";
 import { useAppDispatch } from "@/app/hooks";
 
 const formSchema = z.object({

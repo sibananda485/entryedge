@@ -14,6 +14,7 @@ export interface Job {
   employmentType: string;
   title: string;
   Company: Company;
+  isActive: boolean;
 }
 
 export interface JobDetails {

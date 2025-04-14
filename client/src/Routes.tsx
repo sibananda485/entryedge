@@ -1,13 +1,12 @@
 import AdminProtected from "./components/wrapper/AdminProtected";
-import { CompanyTab } from "./features/company/CompanyTab";
+import { CompanyTab } from "./features/recruiter/company/CompanyTab";
 import Profile from "./features/profile/Profile";
-import Education from "./features/education/Education";
-import Experience from "./features/experience/Experience";
+import Education from "./features/candidate/education/Education";
+import Experience from "./features/candidate/experience/Experience";
 import Personal from "./features/personal/Personal";
-import Post from "./features/post/Post";
+import Post from "./features/recruiter/post/Post";
 import SignUp from "./pages/SignUp";
 import NotFound from "./pages/NotFound";
-import AppliedJob from "./features/appliedJobs/AppliedJob";
 import AuthProtected from "./components/wrapper/AuthProtected";
 import Chat from "./features/chats/Chat";
 import Room from "./features/chats/Room";
@@ -16,10 +15,11 @@ import Login from "./pages/Login";
 import Jobs from "./features/jobs/Jobs";
 import { createBrowserRouter } from "react-router-dom";
 import UserProtected from "./components/wrapper/UserProtected";
-import SavedJob from "./features/savedJob/SavedJob";
+import SavedJob from "./features/candidate/savedJob/SavedJob";
 import Layout from "./components/layout/Layout";
 import { MyJobs } from "./tabs/MyJobs";
-import Tasks from "./features/tasks/Tasks";
+import Tasks from "./features/myJobsTable/MyJobsTable";
+import AppliedJob from "./features/candidate/appliedJobs/AppliedJob";
 
 export const router = createBrowserRouter(
   [
@@ -43,9 +43,9 @@ export const router = createBrowserRouter(
         {
           path: "/my-jobs",
           element: (
-            <UserProtected>
+            <AuthProtected>
               <MyJobs />
-            </UserProtected>
+            </AuthProtected>
           ),
         },
         {
@@ -65,7 +65,7 @@ export const router = createBrowserRouter(
           ),
         },
         {
-          path: "/applicant",
+          path: "/my-jobs",
           element: (
             <AdminProtected>
               <Tasks />

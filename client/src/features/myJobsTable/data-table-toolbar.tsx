@@ -1,12 +1,10 @@
-"use client";
-
 import { Table } from "@tanstack/react-table";
 import { X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
-import { employmentTypes, priorities, statuses } from "../data/data";
+import { employmentTypes, statuses } from "./chips";
 import { DataTableFacetedFilter } from "./data-table-faceted-filter";
 import { DataTableViewOptions } from "./data-table-view-options";
 
@@ -23,8 +21,10 @@ export function DataTableToolbar<TData>({
     <div className="flex items-center justify-between">
       <div className="flex flex-1 items-center space-x-2">
         <Input
-          placeholder="Filter tasks..."
-          value={(table.getColumn("title")?.getFilterValue() as string) ?? ""}
+          placeholder="Search title..."
+          value={
+            (table.getColumn("job title")?.getFilterValue() as string) ?? ""
+          }
           onChange={(event) =>
             table.getColumn("title")?.setFilterValue(event.target.value)
           }
@@ -37,16 +37,16 @@ export function DataTableToolbar<TData>({
             options={statuses}
           />
         )}
-        {table.getColumn("priority") && (
+        {/* {table.getColumn("priority") && (
           <DataTableFacetedFilter
             column={table.getColumn("priority")}
             title="Priority"
             options={priorities}
           />
-        )}
-        {table.getColumn("employmentType") && (
+        )} */}
+        {table.getColumn("type") && (
           <DataTableFacetedFilter
-            column={table.getColumn("employmentType")}
+            column={table.getColumn("type")}
             title="Employment Type"
             options={employmentTypes}
           />

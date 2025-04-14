@@ -1,26 +1,26 @@
-import { combineReducers } from '@reduxjs/toolkit';
+import { combineReducers } from "@reduxjs/toolkit";
 import authReducer from "../features/auth/authSlice";
-import companyReducer from "../features/company/companySlice";
-import experienceReducer from "../features/experience/experienceSlice";
-import educationReducer from "../features/education/educationSlice";
+import companyReducer from "../features/recruiter/company/companySlice";
+import experienceReducer from "../features/candidate/experience/experienceSlice";
+import educationReducer from "../features/candidate/education/educationSlice";
 import personalReducer from "../features/personal/personalSlice";
 import jobReducer from "../features/jobs/jobSlice";
-import savedJobReducer from "../features/savedJob/savedJobSlice";
-import appliedJobReducer from "../features/appliedJobs/appliedJobSlice";
+import savedJobReducer from "../features/candidate/savedJob/savedJobSlice";
+import appliedJobReducer from "../features/candidate/appliedJobs/appliedJobSlice";
 
 const appReducer = combineReducers({
-    auth: authReducer,
-    company: companyReducer,
-    experience: experienceReducer,
-    education: educationReducer,
-    personal: personalReducer,
-    job: jobReducer,
-    savedJob: savedJobReducer,
-    appliedJob: appliedJobReducer,
+  auth: authReducer,
+  company: companyReducer,
+  experience: experienceReducer,
+  education: educationReducer,
+  personal: personalReducer,
+  job: jobReducer,
+  savedJob: savedJobReducer,
+  appliedJob: appliedJobReducer,
 });
 
 const rootReducer = (state: any, action: any) => {
-  if (action.type === 'LOGOUT') {
+  if (action.type === "LOGOUT") {
     state = undefined; // Reset state
   }
   return appReducer(state, action);

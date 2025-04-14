@@ -1,20 +1,4 @@
-import {
-  Building,
-  Cloud,
-  CreditCard,
-  Github,
-  Keyboard,
-  LifeBuoy,
-  LogOut,
-  Mail,
-  MessageSquare,
-  Plus,
-  PlusCircle,
-  Settings,
-  User,
-  UserPlus,
-  Users,
-} from "lucide-react";
+import { Building, LogOut, User } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {

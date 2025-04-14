@@ -1,4 +1,3 @@
-import * as React from "react";
 import { Column } from "@tanstack/react-table";
 import { Check, PlusCircle } from "lucide-react";
 
@@ -20,14 +19,15 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Separator } from "@/components/ui/separator";
+import { ComponentType } from "react";
 
 interface DataTableFacetedFilterProps<TData, TValue> {
   column?: Column<TData, TValue>;
   title?: string;
   options: {
     label: string;
-    value: string;
-    icon?: React.ComponentType<{ className?: string }>;
+    value: string | boolean;
+    icon?: ComponentType<{ className?: string }>;
   }[];
 }
 
@@ -37,9 +37,11 @@ export function DataTableFacetedFilter<TData, TValue>({
   options,
 }: DataTableFacetedFilterProps<TData, TValue>) {
   const facets = column?.getFacetedUniqueValues();
-  const selectedValues = new Set(column?.getFilterValue() as string[]);
+  const selectedValues = new Set(
+    column?.getFilterValue() as Array<string | boolean>
+  );
 
-  return ( 
+  return (
     <Popover>
       <PopoverTrigger asChild>
         <Button variant="outline" size="sm" className="h-8 border-dashed">
@@ -68,7 +70,7 @@ export function DataTableFacetedFilter<TData, TValue>({
                     .map((option) => (
                       <Badge
                         variant="secondary"
-                        key={option.value}
+                        key={"" + option.value}
                         className="rounded-sm px-1 font-normal"
                       >
                         {option.label}
@@ -90,7 +92,7 @@ export function DataTableFacetedFilter<TData, TValue>({
                 const isSelected = selectedValues.has(option.value);
                 return (
                   <CommandItem
-                    key={option.value}
+                    key={"" + option.value}
                     onSelect={() => {
                       if (isSelected) {
                         selectedValues.delete(option.value);

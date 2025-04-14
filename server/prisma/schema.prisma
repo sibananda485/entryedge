@@ -132,6 +132,7 @@ model Job {
   companyId        Int
   PersonalData     PersonalData[]
   JobApplication   JobApplication[]
+  isActive         Boolean          @default(true)
 }
 
 model JobApplication {

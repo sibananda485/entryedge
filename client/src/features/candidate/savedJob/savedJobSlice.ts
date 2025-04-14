@@ -2,7 +2,7 @@ import { RootState } from "@/app/store";
 import { BASE_URL } from "@/lib/constants";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
-import { Job as SavedJob } from "../jobs/jobSlice";
+import { Job as SavedJob } from "../../jobs/jobSlice";
 
 export const fetchSavedJob = createAsyncThunk(
   "savedJob/fetchSavedJob",

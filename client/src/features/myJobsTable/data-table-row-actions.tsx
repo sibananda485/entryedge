@@ -1,5 +1,5 @@
 import { Row } from "@tanstack/react-table";
-import { MoreHorizontal } from "lucide-react";
+import { MoreHorizontal, Pencil, ScanSearch, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -9,14 +9,14 @@ import {
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
   DropdownMenuSeparator,
-  DropdownMenuShortcut,
   DropdownMenuSub,
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-import { labels } from "../data/data";
+import { statuses } from "./chips";
+import { Job } from "../jobs/jobSlice";
 
 interface DataTableRowActionsProps<TData> {
   row: Row<TData>;
@@ -25,7 +25,7 @@ interface DataTableRowActionsProps<TData> {
 export function DataTableRowActions<TData>({
   row,
 }: DataTableRowActionsProps<TData>) {
-  const task = row.original;
+  const task = row.original as Job;
 
   return (
     <DropdownMenu>
@@ -39,26 +39,33 @@ export function DataTableRowActions<TData>({
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-[160px]">
-        <DropdownMenuItem>Edit</DropdownMenuItem>
-        <DropdownMenuItem>Make a copy</DropdownMenuItem>
-        <DropdownMenuItem>Favorite</DropdownMenuItem>
+        <DropdownMenuItem className="flex justify-between items-center">
+          Edit <Pencil />
+        </DropdownMenuItem>
+        <DropdownMenuItem className="flex justify-between items-center">
+          View Applicant <ScanSearch />
+        </DropdownMenuItem>
+        {/* <DropdownMenuItem>Favorite</DropdownMenuItem> */}
         <DropdownMenuSeparator />
         <DropdownMenuSub>
-          <DropdownMenuSubTrigger>Labels</DropdownMenuSubTrigger>
+          <DropdownMenuSubTrigger>Status</DropdownMenuSubTrigger>
           <DropdownMenuSubContent>
-            <DropdownMenuRadioGroup value={task.label}>
-              {labels.map((label) => (
-                <DropdownMenuRadioItem key={label.value} value={label.value}>
-                  {label.label}
+            <DropdownMenuRadioGroup value={"" + task.isActive}>
+              {statuses.map((status) => (
+                <DropdownMenuRadioItem
+                  key={status.label}
+                  value={"" + status.value}
+                >
+                  {status.label}
                 </DropdownMenuRadioItem>
               ))}
             </DropdownMenuRadioGroup>
           </DropdownMenuSubContent>
         </DropdownMenuSub>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>
-          Delete
-          <DropdownMenuShortcut>⌘⌫</DropdownMenuShortcut>
+        <DropdownMenuItem className="flex justify-between items-center">
+          Delete <Trash2 />
+          {/* <DropdownMenuShortcut>⌘⌫</DropdownMenuShortcut> */}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

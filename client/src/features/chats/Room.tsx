@@ -18,6 +18,7 @@ import { selectRole, selectUser } from "../auth/authSlice";
 import { useAppSelector } from "@/app/hooks";
 import axios from "axios";
 import { BASE_URL, SOCKET_URL } from "@/lib/constants";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 const FormSchema = z.object({
   message: z.string(),
@@ -96,18 +97,20 @@ export default function Room() {
 
   return (
     <div
-      className={`h-full border col-span-8 rounded-lg flex flex-col p-2 ${
+      className={`h-remaining-height border col-span-8 rounded-lg flex flex-col p-2 ${
         id ? "block" : ""
       }`}
     >
-      <Link to={"/chat"}>
-        <Button variant="ghost" size="icon" className="sm:hidden">
-          <ArrowLeft />
-        </Button>
-      </Link>
-      <div>Mind Space Technology </div>
-      <div className="grow my-2 space-y-2">
-        <div className="max-h-full overflow-y-auto flex flex-col justify-end ">
+      <div className="flex items-center gap-2">
+        <Link to={"/chat"}>
+          <Button variant="ghost" size="icon" className="sm:hidden">
+            <ArrowLeft />
+          </Button>
+        </Link>
+        <p className="font-semibold "> Mind Space Technology</p>
+      </div>
+      <ScrollArea className="grow my-2 space-y-2">
+        <div className="flex flex-col justify-end ">
           {messages.map((a, i) => (
             <div
               key={i}
@@ -134,7 +137,7 @@ export default function Room() {
             </div>
           ))}
         </div>
-      </div>
+      </ScrollArea>
       <div>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="flex gap-2">

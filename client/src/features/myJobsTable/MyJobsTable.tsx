@@ -1,8 +1,6 @@
 import { useAppDispatch, useAppSelector } from "@/app/hooks";
-import { columns } from "./components/columns";
-import { DataTable } from "./components/data-table";
-import { UserNav } from "./components/user-nav";
-// import { data } from "./data/data";
+import { columns } from "./columns";
+import { DataTable } from "./data-table";
 import {
   fetchJobData,
   selectJobData,
@@ -10,14 +8,21 @@ import {
 } from "../jobs/jobSlice";
 import { useEffect } from "react";
 
-export default function Tasks() {
+export default function MyJobsTable() {
   const dispatch = useAppDispatch();
   const loading = useAppSelector(selectJobLoading);
   const data = useAppSelector(selectJobData);
   useEffect(() => {
     !data && dispatch(fetchJobData());
   }, [data]);
-  console.log(loading);
+  if (loading) {
+    return (
+      <div className="flex h-full w-full items-center justify-center p-8">
+        <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-blue-500"></div>
+      </div>
+    );
+  }
+
   return (
     <>
       <div className="hidden h-full flex-1 flex-col space-y-8 p-8 md:flex">
@@ -30,9 +35,9 @@ export default function Tasks() {
               Here&apos;s a list of your posted job!
             </p>
           </div>
-          <div className="flex items-center space-x-2">
+          {/* <div className="flex items-center space-x-2">
             <UserNav />
-          </div>
+          </div> */}
         </div>
         <DataTable data={data || []} columns={columns} />
       </div>

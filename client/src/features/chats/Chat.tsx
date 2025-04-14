@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Building, UserRound } from "lucide-react";
 import axios from "axios";
 import { BASE_URL } from "@/lib/constants";
-import { Company } from "../company/companySlice";
+import { Company } from "../recruiter/company/companySlice";
 import { Link, Outlet, useParams } from "react-router-dom";
 import { useAppSelector } from "@/app/hooks";
 import { selectRole, selectUser } from "../auth/authSlice";
@@ -42,7 +42,7 @@ export default function Chat() {
 
   return (
     <div
-      className={`h-full py-2 grow max-w-6xl w-full mx-auto sm:grid grid-cols-12 gap-5`}
+      className={`h-remaining-height py-2 grow max-w-6xl w-full mx-auto sm:grid grid-cols-12 gap-5`}
     >
       <div
         className={`${

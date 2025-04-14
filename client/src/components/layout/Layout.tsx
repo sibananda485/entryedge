@@ -15,21 +15,25 @@ export default function Layout() {
 }
 const items = [
   {
+    id: "1",
     label: "Home",
     path: "/",
     icon: House,
   },
   {
+    id: "2",
     label: "My jobs",
     path: "/my-jobs",
     icon: Bookmark,
   },
   {
+    id: "3",
     label: "Messages",
     path: "/chat",
     icon: MessageSquare,
   },
   {
+    id: "4",
     label: "Profile",
     path: "/profile",
     icon: UserRound,
@@ -45,6 +49,7 @@ function BootomButtons() {
         const active = pathname == a.path;
         return (
           <Link
+            key={a.id}
             to={a.path}
             className={`flex flex-col items-center py-3 ${
               active && "border-b-4 border-foreground"

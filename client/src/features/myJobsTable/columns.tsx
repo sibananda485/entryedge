@@ -1,11 +1,10 @@
 import { ColumnDef } from "@tanstack/react-table";
-import { employmentTypes, labels, priorities, statuses } from "../data/data";
+import { employmentTypes, statuses } from "./chips";
 import { DataTableColumnHeader } from "./data-table-column-header";
 import { DataTableRowActions } from "./data-table-row-actions";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Badge } from "@/components/ui/badge";
 import { Job } from "@/features/jobs/jobSlice";
-import { Banknote, MapPin, Pin, PinIcon } from "lucide-react";
+import { Banknote, MapPin } from "lucide-react";
 
 export const columns: ColumnDef<Job>[] = [
   {
@@ -42,39 +41,46 @@ export const columns: ColumnDef<Job>[] = [
     enableHiding: false,
   },
   {
+    id: "job title",
     accessorKey: "title",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Title" />
+      <DataTableColumnHeader column={column} title="Job Title" />
     ),
     cell: ({ row }) => {
-      const label = labels.find((label) => label.value === row.original.title);
-
       return (
         <div className="flex space-x-2">
-          {label && <Badge variant="outline">{label.label}</Badge>}
           <span className="max-w-[500px] truncate font-medium">
-            {row.getValue("title")}
+            {row.getValue("job title")}
           </span>
         </div>
       );
     },
   },
   {
-    accessorKey: "deadline",
+    id: "type",
+    accessorKey: "employmentType",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Deadline" />
+      <DataTableColumnHeader column={column} title="Type" />
     ),
     cell: ({ row }) => {
+      const employmentType = employmentTypes.find(
+        (employmentType) => employmentType.value == row.original.employmentType
+      );
+      if (!employmentType) return null;
       return (
         <div className="flex space-x-2">
-          <span className="max-w-[500px] truncate ">
-            {new Date(row.getValue("deadline")).toLocaleDateString()}
+          <span className="max-w-[500px] truncate flex items-center gap-1">
+            {employmentType.icon && (
+              <employmentType.icon className="mr-2 h-4 w-4 text-muted-foreground" />
+            )}
+            {row.getValue("type")}
           </span>
         </div>
       );
     },
   },
   {
+    id: "location",
     accessorKey: "location",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Location" />
@@ -90,28 +96,7 @@ export const columns: ColumnDef<Job>[] = [
     },
   },
   {
-    accessorKey: "employmentType",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Location" />
-    ),
-    cell: ({ row }) => {
-      const employmentType = employmentTypes.find(
-        (employmentType) => employmentType.value == row.original.employmentType
-      );
-      if (!employmentType) return null;
-      return (
-        <div className="flex space-x-2">
-          <span className="max-w-[500px] truncate flex items-center gap-1">
-            {employmentType.icon && (
-              <employmentType.icon className="mr-2 h-4 w-4 text-muted-foreground" />
-            )}
-            {row.getValue("employmentType")}
-          </span>
-        </div>
-      );
-    },
-  },
-  {
+    id: "salary range",
     accessorKey: "salaryMax",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Salary Range" />
@@ -125,18 +110,36 @@ export const columns: ColumnDef<Job>[] = [
         <div className="flex space-x-2">
           <span className="max-w-[500px] truncate flex items-center gap-1">
             <Banknote className="mr-2 h-4 w-4 text-muted-foreground" />
-            {row.original.salaryMin + "-" + row.getValue("salaryMax")}
+            {row.original.salaryMin + "-" + row.getValue("salary range")}
           </span>
         </div>
       );
     },
   },
   {
-    accessorKey: "status",
+    id: "deadline",
+    accessorKey: "deadline",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Deadline" />
+    ),
+    cell: ({ row }) => {
+      return (
+        <div className="flex space-x-2">
+          <span className="max-w-[500px] truncate ">
+            {new Date(row.getValue("deadline")).toLocaleDateString()}
+          </span>
+        </div>
+      );
+    },
+  },
+  {
+    id: "status",
+    accessorKey: "isActive",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Status" />
     ),
     cell: ({ row }) => {
+      const value = row.getValue("status");
       const status = statuses.find(
         (status) => status.value === row.getValue("status")
       );
@@ -148,36 +151,15 @@ export const columns: ColumnDef<Job>[] = [
       return (
         <div className="flex w-[100px] items-center">
           {status.icon && (
-            <status.icon className="mr-2 h-4 w-4 text-muted-foreground" />
+            <status.icon
+              className={`mr-2 h-2 w-2 fill-current text-muted-foreground ${
+                value ? "text-green-500" : "text-red-500"
+              }`}
+            />
           )}
-          <span>{status.label}</span>
-        </div>
-      );
-    },
-    filterFn: (row, id, value) => {
-      return value.includes(row.getValue(id));
-    },
-  },
-  {
-    accessorKey: "priority",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Priority" />
-    ),
-    cell: ({ row }) => {
-      const priority = priorities.find(
-        (priority) => priority.value === row.getValue("priority")
-      );
-
-      if (!priority) {
-        return null;
-      }
-
-      return (
-        <div className="flex items-center">
-          {priority.icon && (
-            <priority.icon className="mr-2 h-4 w-4 text-muted-foreground" />
-          )}
-          <span>{priority.label}</span>
+          <span className={`${value ? "text-green-500" : "text-red-500"}`}>
+            {status.label}
+          </span>
         </div>
       );
     },
@@ -187,6 +169,9 @@ export const columns: ColumnDef<Job>[] = [
   },
   {
     id: "actions",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Action" />
+    ),
     cell: ({ row }) => <DataTableRowActions row={row} />,
   },
 ];

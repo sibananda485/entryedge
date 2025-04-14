@@ -1,8 +1,8 @@
 import { RootState } from "@/app/store";
+import { JobDetails } from "@/features/jobs/jobSlice";
 import { BASE_URL } from "@/lib/constants";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
-import { JobDetails } from "../jobs/jobSlice";
 
 interface AppliedJob {
   id: string;

@@ -35,13 +35,13 @@ import {
   createSavedJob,
   deleteSavedJob,
   selectSavedJobData,
-} from "../savedJob/savedJobSlice";
+} from "../candidate/savedJob/savedJobSlice";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import {
   createAppliedJob,
   selectAppliedJobData,
-} from "../appliedJobs/appliedJobSlice";
+} from "../candidate/appliedJobs/appliedJobSlice";
 
 export const JobDetailsCard = () => {
   const { toast } = useToast();

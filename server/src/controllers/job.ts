@@ -24,6 +24,7 @@ export const handleGetJob = async (req: Request, res: Response) => {
         salaryMin: true,
         employmentType: true,
         title: true,
+        isActive: true,
         Company: {
           select: {
             bio: true,
