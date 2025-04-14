@@ -34,11 +34,11 @@ export const columns: ColumnDef<Job>[] = [
   {
     accessorKey: "id",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="ID" />
+      <DataTableColumnHeader column={column} title="Job ID" />
     ),
     cell: ({ row }) => <div className="w-[80px]">{row.getValue("id")}</div>,
-    enableSorting: false,
-    enableHiding: false,
+    // enableSorting: false,
+    // enableHiding: false,
   },
   {
     id: "job title",

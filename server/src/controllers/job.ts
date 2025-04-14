@@ -4,7 +4,7 @@ import JobSchema from "../schemas/job";
 
 export const handleGetJob = async (req: Request, res: Response) => {
   const user = req.user;
-  if (user && (user.role = "ADMIN")) {
+  if (user && user.role == "ADMIN") {
     const company = await prisma.company.findFirst({
       where: {
         userId: user.id,
@@ -13,6 +13,9 @@ export const handleGetJob = async (req: Request, res: Response) => {
     const jobs = await prisma.job.findMany({
       where: {
         companyId: company?.id,
+      },
+      orderBy: {
+        createdAt: "asc",
       },
       select: {
         id: true,
@@ -38,6 +41,12 @@ export const handleGetJob = async (req: Request, res: Response) => {
     return;
   } else {
     const jobs = await prisma.job.findMany({
+      where: {
+        isActive: true,
+      },
+      orderBy: {
+        updatedAt: "desc",
+      },
       select: {
         id: true,
         deadline: true,
@@ -60,6 +69,7 @@ export const handleGetJob = async (req: Request, res: Response) => {
     res.json(jobs);
   }
 };
+
 export const handleGetJobById = async (req: Request, res: Response) => {
   const user = req.user;
 
@@ -133,12 +143,12 @@ export const handleCreateJob = async (req: Request, res: Response) => {
   res.status(201).json(createdJob);
 };
 export const handleUpdateJob = async (req: Request, res: Response) => {
-  try {
-    JobSchema.parse(req.body);
-  } catch (error) {
-    res.status(400).json({ message: "Schema validation error", error });
-    return;
-  }
+  // try {
+  //   JobSchema.parse(req.body);
+  // } catch (error) {
+  //   res.status(400).json({ message: "Schema validation error", error });
+  //   return;
+  // }
   const user = req.user;
   const company = await prisma.company.findFirst({
     where: {

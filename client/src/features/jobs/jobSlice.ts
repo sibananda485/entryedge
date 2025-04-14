@@ -84,7 +84,7 @@ export const jobSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(fetchJobData.pending, (state) => {
-        state.loading = true;
+        // state.loading = true;
         state.error = false;
       })
       .addCase(fetchJobData.fulfilled, (state, action) => {
