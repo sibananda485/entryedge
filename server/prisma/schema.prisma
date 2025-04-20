@@ -92,24 +92,27 @@ model Experience {
 }
 
 model PersonalData {
-  id             Int              @id @default(autoincrement())
-  firstName      String
-  middleName     String?
-  lastName       String
-  dob            DateTime?
-  street         String?
-  country        String?
-  phone          String?
-  city           String?
-  state          String?
-  zipCode        String?
-  bio            String?
-  createdAt      DateTime         @default(now())
-  updatedAt      DateTime         @updatedAt
-  User           User             @relation(fields: [userId], references: [id])
-  userId         Int              @unique
-  savedJob       Job[]
-  JobApplication JobApplication[]
+  id              Int              @id @default(autoincrement())
+  firstName       String
+  middleName      String?
+  lastName        String
+  dob             DateTime?
+  street          String?
+  country         String?
+  phone           String?
+  city            String?
+  state           String?
+  zipCode         String?
+  bio             String?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  User            User             @relation(fields: [userId], references: [id])
+  userId          Int              @unique
+  savedJob        Job[]
+  JobApplication  JobApplication[]
+  resume          String?
+  resumeFileName  String?
+  resumeUpdatedAt DateTime?
 }
 
 model Job {

@@ -19,6 +19,9 @@ export interface Personal {
   createdAt: string;
   updatedAt: string;
   userId: string;
+  resume: string | null;
+  resumeFileName: string | null;
+  resumeUpdatedAt: string | null;
 }
 
 export const fetchPersonalData = createAsyncThunk(
@@ -48,7 +51,6 @@ export const personalSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(fetchPersonalData.pending, (state) => {
-        state.loading = true;
         state.error = false;
       })
       .addCase(fetchPersonalData.fulfilled, (state, action) => {

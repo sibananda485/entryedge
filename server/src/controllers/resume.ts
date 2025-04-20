@@ -1,49 +1,61 @@
 import { Request, Response } from "express";
+import { GetObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3";
+import s3Client from "../config/s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { prisma } from "..";
 
-import multer from "multer";
-import { v4 as uuidv4 } from "uuid";
-import { s3 } from "../config/s3";
+const uploadToBucket = async (bucket: string, filename: string) => {
+  const command = new PutObjectCommand({
+    Bucket: bucket,
+    Key: `${filename}`,
+    ContentType: "application/pdf",
+  });
+  const url = await getSignedUrl(s3Client, command);
+  return url;
+};
 
-const storage = multer.memoryStorage();
-
-export const handleGetResume = async (req: Request, res: Response) => {
-  const user = req.user;
-  res.json("HANDLE GET RESUME");
+const getSignedUrlFromBucket = async (bucket: string, key: string) => {
+  const command = new GetObjectCommand({
+    Bucket: bucket,
+    Key: key,
+  });
+  const url = await getSignedUrl(s3Client, command);
+  return url;
 };
 
 export const handleUploadResume = async (req: Request, res: Response) => {
   const user = req.user;
-
-  try {
-    const file = req.file;
-    
-    if (!file) {
-      res.status(400).send("No file uploaded.");
-      return;
-    }
-
-    const params = {
-      Bucket: "your-bucket-name",
-      Key: `resumes/${uuidv4()}_${file.originalname}`,
-      Body: file.buffer,
-      ContentType: file.mimetype,
-      ACL: "public-read", // or private if you want signed URLs
-    };
-
-    const data = await s3.upload(params).promise();
-
-    res.json({ url: data.Location });
-    return;
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Upload failed.");
+  if (!req.query) {
+    res.status(400).json({ error: "No file provided" });
     return;
   }
+  const uniqueKey = `${user?.id}-${Date.now()}-${req.query.name}`;
+  const url = await uploadToBucket("entryedge", uniqueKey);
+  await prisma.personalData.update({
+    where: {
+      userId: user?.id,
+    },
+    data: {
+      resume: `/${uniqueKey}`,
+      resumeFileName: req.query.name as string,
+      resumeUpdatedAt: new Date(),
+    },
+  });
+  res.json(url);
+  return;
 };
 
 export const handleDeleteResume = async (req: Request, res: Response) => {
   const user = req.user;
-
-  res.status(200).json("Resume Deleted");
+  await prisma.personalData.update({
+    where: {
+      userId: user?.id,
+    },
+    data: {
+      resume: null,
+      resumeFileName: null,
+      resumeUpdatedAt: null,
+    },
+  });
+  res.status(200).json({ message: "Resume Deleted" });
 };
