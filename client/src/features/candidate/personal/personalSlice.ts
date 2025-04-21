@@ -1,4 +1,5 @@
 import { RootState } from "@/app/store";
+import { TokenRes } from "@/features/auth/authSlice";
 import { BASE_URL } from "@/lib/constants";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
@@ -19,6 +20,10 @@ export interface Personal {
   createdAt: string;
   updatedAt: string;
   userId: string;
+  resume: string;
+  resumeFileName: string;
+  resumeUpdatedAt: string;
+  User: TokenRes;
 }
 
 export const fetchPersonalData = createAsyncThunk(

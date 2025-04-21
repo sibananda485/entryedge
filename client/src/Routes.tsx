@@ -18,8 +18,9 @@ import UserProtected from "./components/wrapper/UserProtected";
 import SavedJob from "./features/candidate/savedJob/SavedJob";
 import Layout from "./components/layout/Layout";
 import { MyJobs } from "./tabs/MyJobs";
-import Tasks from "./features/myJobsTable/MyJobsTable";
 import AppliedJob from "./features/candidate/appliedJobs/AppliedJob";
+import Applicants from "./features/recruiter/applicant/Applicants";
+import MyJobsTable from "./features/recruiter/myJobsTable/MyJobsTable";
 
 export const router = createBrowserRouter(
   [
@@ -68,7 +69,7 @@ export const router = createBrowserRouter(
           path: "/my-jobs",
           element: (
             <AdminProtected>
-              <Tasks />
+              <MyJobsTable />
             </AdminProtected>
           ),
         },
@@ -110,6 +111,14 @@ export const router = createBrowserRouter(
             <UserProtected>
               <Experience />
             </UserProtected>
+          ),
+        },
+        {
+          path: "/applicant/:id",
+          element: (
+            <AdminProtected>
+              <Applicants />
+            </AdminProtected>
           ),
         },
         {

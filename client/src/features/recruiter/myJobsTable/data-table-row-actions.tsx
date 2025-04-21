@@ -15,14 +15,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { statuses } from "./chips";
 import {
-  fetchJobData,
-  fetchJobDataById,
-  Job,
-  selectJobDataById,
-  selectJobErrorById,
-  selectJobLoadingById,
-} from "../jobs/jobSlice";
-import {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -59,6 +51,15 @@ import { BASE_URL } from "@/lib/constants";
 import { useToast } from "@/hooks/use-toast";
 import { useAppDispatch, useAppSelector } from "@/app/hooks";
 import { Input } from "@/components/ui/input";
+import { Link } from "react-router-dom";
+import {
+  selectJobLoadingById,
+  fetchJobData,
+  fetchJobDataById,
+  selectJobDataById,
+  Job,
+  selectJobErrorById,
+} from "@/features/jobs/jobSlice";
 
 interface DataTableRowActionsProps<TData> {
   row: Row<TData>;
@@ -229,9 +230,12 @@ export function DataTableRowActions<TData>({
                 Edit <Pencil />
               </DropdownMenuItem>
             </DialogTrigger>
-            <DropdownMenuItem className="flex justify-between items-center">
-              View Applicant <ScanSearch />
-            </DropdownMenuItem>
+
+            <Link to={`/applicant/${singleJob.id}`}>
+              <DropdownMenuItem className="flex justify-between items-center">
+                View Applicant <ScanSearch />
+              </DropdownMenuItem>
+            </Link>
             {/* <DropdownMenuItem>Favorite</DropdownMenuItem> */}
             <DropdownMenuSeparator />
             <DropdownMenuSub>

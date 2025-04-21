@@ -3,7 +3,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { selectRole } from "@/features/auth/authSlice";
 import AppliedJob from "@/features/candidate/appliedJobs/AppliedJob";
 import SavedJob from "@/features/candidate/savedJob/SavedJob";
-import Tasks from "@/features/myJobsTable/MyJobsTable";
+import MyJobsTable from "@/features/recruiter/myJobsTable/MyJobsTable";
 
 export function MyJobs() {
   const role = useAppSelector(selectRole);
@@ -26,6 +26,6 @@ export function MyJobs() {
       </div>
     );
   } else {
-    return <Tasks />;
+    return <MyJobsTable />;
   }
 }

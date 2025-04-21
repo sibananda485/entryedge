@@ -1,20 +1,27 @@
-import { useAppDispatch, useAppSelector } from "@/app/hooks";
 import { columns } from "./columns";
 import { DataTable } from "./data-table";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import axios from "axios";
+import { BASE_URL } from "@/lib/constants";
+import { AppliedJob } from "@/features/candidate/appliedJobs/appliedJobSlice";
 import {
-  fetchJobData,
-  selectJobData,
-  selectJobLoading,
-} from "../jobs/jobSlice";
-import { useEffect } from "react";
+  fetchApplicant,
+  selectApplicantData,
+  selectApplicantLoading,
+} from "./applicantSlice";
+import { useAppDispatch, useAppSelector } from "@/app/hooks";
 
-export default function MyJobsTable() {
+export default function Applicants() {
+  const { id } = useParams();
   const dispatch = useAppDispatch();
-  const loading = useAppSelector(selectJobLoading);
-  const data = useAppSelector(selectJobData);
+  const data = useAppSelector(selectApplicantData);
+  const loading = useAppSelector(selectApplicantLoading);
+
   useEffect(() => {
-    !data && dispatch(fetchJobData());
-  }, [data]);
+    dispatch(fetchApplicant(id || ""));
+  }, [id]);
+
   if (loading) {
     return (
       <div className="flex h-full w-full items-center justify-center p-8">
@@ -28,11 +35,9 @@ export default function MyJobsTable() {
       <div className="hidden h-full flex-1 flex-col space-y-8 p-8 md:flex">
         <div className="flex items-center justify-between space-y-2">
           <div>
-            <h2 className="text-2xl font-bold tracking-tight">
-              Your Posted Jobs!
-            </h2>
+            <h2 className="text-2xl font-bold tracking-tight">Applicants!</h2>
             <p className="text-muted-foreground">
-              Here&apos;s a list of your posted job!
+              Here&apos;s a list of applicant!
             </p>
           </div>
           {/* <div className="flex items-center space-x-2">

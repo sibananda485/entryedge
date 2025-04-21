@@ -152,7 +152,7 @@ export const columns: ColumnDef<Job>[] = [
         <div className="flex w-[100px] items-center">
           {status.icon && (
             <status.icon
-              className={`mr-2 h-2 w-2 fill-current text-muted-foreground ${
+              className={`mr-2 h-2 w-2 fill-current  ${
                 value ? "text-green-500" : "text-red-500"
               }`}
             />

@@ -3,11 +3,13 @@ import { JobDetails } from "@/features/jobs/jobSlice";
 import { BASE_URL } from "@/lib/constants";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
+import { Personal } from "../personal/personalSlice";
 
-interface AppliedJob {
+export interface AppliedJob {
   id: string;
   jobId: string;
   personalDataId: string;
+  personalData:Personal
   status: string;
   remarks: string;
   createdAt: string;

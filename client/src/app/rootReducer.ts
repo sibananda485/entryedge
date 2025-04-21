@@ -7,6 +7,7 @@ import personalReducer from "../features/personal/personalSlice";
 import jobReducer from "../features/jobs/jobSlice";
 import savedJobReducer from "../features/candidate/savedJob/savedJobSlice";
 import appliedJobReducer from "../features/candidate/appliedJobs/appliedJobSlice";
+import applicantsReducer from "@/features/recruiter/applicant/applicantSlice";
 
 const appReducer = combineReducers({
   auth: authReducer,
@@ -17,6 +18,7 @@ const appReducer = combineReducers({
   job: jobReducer,
   savedJob: savedJobReducer,
   appliedJob: appliedJobReducer,
+  applicants: applicantsReducer,
 });
 
 const rootReducer = (state: any, action: any) => {

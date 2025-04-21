@@ -4,7 +4,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import axios from "axios";
 
-interface TokenRes {
+export interface TokenRes {
   email: string;
   name: string;
   id: string;
@@ -20,6 +20,10 @@ export const fetchUserData = createAsyncThunk(
       const response = await axios.get<TokenRes>(BASE_URL + "/auth/token");
       return response.data;
     } catch (error: any) {
+      if (axios.isAxiosError(error)) {
+        error.status == 401 && localStorage.removeItem("token");
+      }
+
       console.error("Error fetching user data:", error);
       return rejectWithValue(
         error.response?.data || "Failed to fetch user data"
@@ -83,7 +87,6 @@ export const authSlice = createSlice({
         }
       })
       .addCase(fetchUserData.rejected, (state) => {
-        localStorage.removeItem("token");
         state.loading = false;
         state.error = true;
       });
