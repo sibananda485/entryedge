@@ -2,6 +2,7 @@ import { RootState } from "@/app/store";
 import { BASE_URL } from "@/lib/constants";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
+import { TokenRes } from "../auth/authSlice";
 
 export interface Personal {
   id: string;
@@ -19,6 +20,7 @@ export interface Personal {
   createdAt: string;
   updatedAt: string;
   userId: string;
+  User?: TokenRes;
   resume: string | null;
   resumeFileName: string | null;
   resumeUpdatedAt: string | null;
@@ -26,8 +28,12 @@ export interface Personal {
 
 export const fetchPersonalData = createAsyncThunk(
   "personal/fetchPersonalData",
-  async () => {
-    const response = await axios.get<Personal>(BASE_URL + "/personal");
+  async (id?: string) => {
+    if (!id) {
+      const response = await axios.get<Personal>(BASE_URL + "/personal");
+      return response.data;
+    }
+    const response = await axios.get<Personal>(BASE_URL + "/personal/" + id);
     return response.data;
   }
 );

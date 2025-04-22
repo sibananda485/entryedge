@@ -90,6 +90,14 @@ export const router = createBrowserRouter(
           ),
         },
         {
+          path: "/profile/:id",
+          element: (
+            <AdminProtected>
+              <Profile />
+            </AdminProtected>
+          ),
+        },
+        {
           path: "/personal",
           element: (
             <UserProtected>
@@ -106,11 +114,27 @@ export const router = createBrowserRouter(
           ),
         },
         {
+          path: "/education/:id",
+          element: (
+            <AdminProtected>
+              <Education />
+            </AdminProtected>
+          ),
+        },
+        {
           path: "/experience",
           element: (
             <UserProtected>
               <Experience />
             </UserProtected>
+          ),
+        },
+        {
+          path: "/experience/:id",
+          element: (
+            <AdminProtected>
+              <Experience />
+            </AdminProtected>
           ),
         },
         {

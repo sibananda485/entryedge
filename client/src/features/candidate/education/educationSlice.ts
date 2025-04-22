@@ -16,9 +16,16 @@ interface Education {
 
 export const fetchEducationData = createAsyncThunk(
   "education/fetchEducationData",
-  async () => {
-    const response = await axios.get<Education[]>(BASE_URL + "/education");
-    return response.data;
+  async (id?: string) => {
+    if (!id) {
+      const response = await axios.get<Education[]>(BASE_URL + "/education");
+      return response.data;
+    } else {
+      const response = await axios.get<Education[]>(
+        BASE_URL + "/education/" + id
+      );
+      return response.data;
+    }
   }
 );
 

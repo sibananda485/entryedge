@@ -44,7 +44,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useAppDispatch, useAppSelector } from "@/app/hooks";
 import ApiError from "@/components/custom/ApiError";
@@ -64,6 +64,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { selectRole } from "@/features/auth/authSlice";
 
 const getSchema = (flag: boolean) => {
   const ExperienceSchema = z.object({
@@ -95,12 +96,14 @@ type ExperienceEntry = {
 };
 
 export default function Experience() {
+  const { id } = useParams();
   const { toast } = useToast();
   const dispatch = useAppDispatch();
   const experienceData = useAppSelector(selectExperienceData);
   const loading = useAppSelector(selectExperienceLoading);
   const error = useAppSelector(selectExperienceError);
-
+  const role = useAppSelector(selectRole);
+  const isAdmin = role == "ADMIN";
   const form = useForm<ExperienceEntry>({
     resolver: async (values, context, options) => {
       const Schema = getSchema(values.isCurrent);
@@ -192,8 +195,16 @@ export default function Experience() {
   };
 
   useEffect(() => {
-    !experienceData && dispatch(fetchExperience());
-  }, [experienceData]);
+    if (!isAdmin) {
+      !experienceData && dispatch(fetchExperience());
+    }
+  }, [experienceData, role]);
+
+  useEffect(() => {
+    if (isAdmin && id) {
+      dispatch(fetchExperience(id));
+    }
+  }, [role, id]);
 
   if (loading) {
     return <Loader className="animate-spin mx-auto mt-20" />;
@@ -239,9 +250,11 @@ export default function Experience() {
                 }
                 asChild
               >
-                <Button variant="secondary">
-                  <Plus /> Add
-                </Button>
+                {!isAdmin && (
+                  <Button variant="secondary">
+                    <Plus /> Add
+                  </Button>
+                )}
               </DialogTrigger>
               <DialogContent className="max-w-3xl">
                 <DialogHeader>
@@ -367,7 +380,7 @@ export default function Experience() {
                         render={({ field }) => (
                           <FormItem className="flex flex-col">
                             <FormLabel>Start Date</FormLabel>
-                            <Popover>
+                            <Popover modal>
                               <PopoverTrigger asChild>
                                 <FormControl>
                                   <Button
@@ -410,7 +423,7 @@ export default function Experience() {
                         render={({ field }) => (
                           <FormItem className="flex flex-col">
                             <FormLabel>End Date</FormLabel>
-                            <Popover>
+                            <Popover modal>
                               <PopoverTrigger asChild>
                                 <FormControl>
                                   <Button
@@ -535,13 +548,15 @@ export default function Experience() {
                           }}
                           asChild
                         >
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="flex items-center"
-                          >
-                            <Pencil className="w-4 h-4" /> Edit
-                          </Button>
+                          {!isAdmin && (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="flex items-center"
+                            >
+                              <Pencil className="w-4 h-4" /> Edit
+                            </Button>
+                          )}
                         </DialogTrigger>
                         <DialogContent className="max-w-3xl">
                           <DialogHeader>
@@ -628,7 +643,7 @@ export default function Experience() {
                                   render={({ field }) => (
                                     <FormItem className="flex flex-col">
                                       <FormLabel>Start Date</FormLabel>
-                                      <Popover>
+                                      <Popover modal>
                                         <PopoverTrigger asChild>
                                           <FormControl>
                                             <Button
@@ -672,7 +687,7 @@ export default function Experience() {
                                   render={({ field }) => (
                                     <FormItem className="flex flex-col">
                                       <FormLabel>End Date</FormLabel>
-                                      <Popover>
+                                      <Popover modal>
                                         <PopoverTrigger asChild>
                                           <FormControl>
                                             <Button
@@ -762,7 +777,7 @@ export default function Experience() {
             ))
           ) : (
             <p className="text-gray-500 text-center">
-              No experience entries yet. Click "Add" to start!
+              No experience entries yet.{!isAdmin && `Click "Add" to start!`}
             </p>
           )}
         </div>

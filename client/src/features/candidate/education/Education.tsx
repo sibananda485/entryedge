@@ -44,7 +44,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useAppDispatch, useAppSelector } from "@/app/hooks";
 import ApiError from "@/components/custom/ApiError";
@@ -57,6 +57,7 @@ import {
 import axios from "axios";
 import { BASE_URL } from "@/lib/constants";
 import { useToast } from "@/hooks/use-toast";
+import { selectRole } from "@/features/auth/authSlice";
 
 const getSchema = (flag: boolean) => {
   const EducationSchema = z.object({
@@ -84,12 +85,14 @@ type EducationEntry = {
 };
 
 export default function Education() {
+  const { id } = useParams();
   const { toast } = useToast();
   const dispatch = useAppDispatch();
+  const role = useAppSelector(selectRole);
   const educationData = useAppSelector(selectEducationData);
   const loading = useAppSelector(selectEducationLoading);
   const error = useAppSelector(selectEducationError);
-
+  const isUser = role == "USER";
   const form = useForm<EducationEntry>({
     resolver: async (values, context, options) => {
       const Schema = getSchema(values.isPursuing);
@@ -180,8 +183,16 @@ export default function Education() {
   };
 
   useEffect(() => {
-    !educationData && dispatch(fetchEducationData());
-  }, [educationData]);
+    if (isUser) {
+      !educationData && dispatch(fetchEducationData());
+    }
+  }, [educationData, role]);
+
+  useEffect(() => {
+    if (role == "ADMIN") {
+      dispatch(fetchEducationData(id));
+    }
+  }, [role, id]);
 
   if (loading) {
     return <Loader className="animate-spin mx-auto mt-20" />;
@@ -223,9 +234,11 @@ export default function Education() {
                 }
                 asChild
               >
-                <Button variant="secondary">
-                  <Plus /> Add
-                </Button>
+                {isUser && (
+                  <Button variant="secondary">
+                    <Plus /> Add
+                  </Button>
+                )}
               </DialogTrigger>
               <DialogContent className="max-w-3xl">
                 <DialogHeader>
@@ -293,7 +306,7 @@ export default function Education() {
                         render={({ field }) => (
                           <FormItem className="flex flex-col">
                             <FormLabel>Start Date</FormLabel>
-                            <Popover>
+                            <Popover modal>
                               <PopoverTrigger asChild>
                                 <FormControl>
                                   <Button
@@ -334,7 +347,7 @@ export default function Education() {
                         render={({ field }) => (
                           <FormItem className="flex flex-col">
                             <FormLabel>End Date</FormLabel>
-                            <Popover>
+                            <Popover modal>
                               <PopoverTrigger asChild>
                                 <FormControl>
                                   <Button
@@ -456,13 +469,15 @@ export default function Education() {
                           }}
                           asChild
                         >
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="flex items-center"
-                          >
-                            <Pencil className="w-4 h-4" /> Edit
-                          </Button>
+                          {isUser && (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="flex items-center"
+                            >
+                              <Pencil className="w-4 h-4" /> Edit
+                            </Button>
+                          )}
                         </DialogTrigger>
                         <DialogContent className="max-w-3xl">
                           <DialogHeader>
@@ -535,7 +550,7 @@ export default function Education() {
                                   render={({ field }) => (
                                     <FormItem className="flex flex-col">
                                       <FormLabel>Start Date</FormLabel>
-                                      <Popover>
+                                      <Popover modal>
                                         <PopoverTrigger asChild>
                                           <FormControl>
                                             <Button
@@ -579,7 +594,7 @@ export default function Education() {
                                   render={({ field }) => (
                                     <FormItem className="flex flex-col">
                                       <FormLabel>End Date</FormLabel>
-                                      <Popover>
+                                      <Popover modal>
                                         <PopoverTrigger asChild>
                                           <FormControl>
                                             <Button

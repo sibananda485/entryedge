@@ -13,6 +13,24 @@ export const handleGetExperience = async (req: Request, res: Response) => {
   res.json(experience);
 };
 
+export const handleGetExperienceById = async (req: Request, res: Response) => {
+  const experience = await prisma.experience.findMany({
+    where: {
+      userId: +req.params.id,
+    },
+    orderBy: {
+      startDate: "desc",
+    },
+  });
+  if (!experience) {
+    res.status(404).json({
+      message: "Experience not found",
+    });
+    return;
+  }
+  res.json(experience);
+};
+
 export const handleCreateExperience = async (req: Request, res: Response) => {
   try {
     ExperienceSchema.parse(req.body);

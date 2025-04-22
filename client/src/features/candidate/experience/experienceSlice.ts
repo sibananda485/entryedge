@@ -18,9 +18,16 @@ interface Experience {
 
 export const fetchExperience = createAsyncThunk(
   "experience/fetchExperience",
-  async () => {
-    const response = await axios.get<Experience[]>(BASE_URL + "/experience");
-    return response.data;
+  async (id?: string) => {
+    if (!id) {
+      const response = await axios.get<Experience[]>(BASE_URL + "/experience");
+      return response.data;
+    } else {
+      const response = await axios.get<Experience[]>(
+        BASE_URL + "/experience/" + id
+      );
+      return response.data;
+    }
   }
 );
 

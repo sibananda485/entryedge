@@ -12,6 +12,23 @@ export const handleGetEducation = async (req: Request, res: Response) => {
   });
   res.json(educations);
 };
+export const handleGetEducationById = async (req: Request, res: Response) => {
+  const education = await prisma.education.findMany({
+    where: {
+      userId: +req.params.id,
+    },
+    orderBy: {
+      startDate: "desc",
+    },
+  });
+  if (!education) {
+    res.status(404).json({
+      message: "Education not found",
+    });
+    return;
+  }
+  res.json(education);
+};
 
 export const handleCreateEducation = async (req: Request, res: Response) => {
   try {

@@ -4,13 +4,14 @@ import {
   FileTextIcon,
   Loader,
   MapPin,
+  MessageCircle,
   Phone,
   Replace,
   Trash2,
   Upload,
 } from "lucide-react";
 import Resume from "@/assets/resume.svg";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -28,7 +29,7 @@ import {
   selectPersonalError,
   fetchPersonalData,
 } from "../personal/personalSlice";
-import { selectUser } from "../auth/authSlice";
+import { selectRole, selectUser } from "../auth/authSlice";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -57,14 +58,25 @@ const uploadSchema = z.object({
 type UploadFormType = z.infer<typeof uploadSchema>;
 
 export default function Profile() {
+  const role = useAppSelector(selectRole);
+  console.log(role);
+  const { id } = useParams();
   const dispatch = useAppDispatch();
   const loading = useAppSelector(selectPersonalLoading);
   const user = useAppSelector(selectUser);
   const personalData = useAppSelector(selectPersonalData);
   const error = useAppSelector(selectPersonalError);
   useEffect(() => {
-    !personalData && dispatch(fetchPersonalData());
+    if (!personalData && role == "USER") {
+      dispatch(fetchPersonalData());
+    }
   }, [personalData]);
+
+  useEffect(() => {
+    if (role == "ADMIN") {
+      dispatch(fetchPersonalData(id));
+    }
+  }, [role, id]);
 
   const {
     register,
@@ -151,11 +163,17 @@ export default function Profile() {
               {personalData?.lastName[0]}
             </div>
           </div>
-          <Link to="/personal" className="flex justify-between items-center">
+          <Link
+            onClick={(e) => role == "ADMIN" && e.preventDefault()}
+            to="/personal"
+            className="flex justify-between items-center"
+          >
             <div className="space-y-2">
               <div className="flex items-center gap-3">
                 <Mail className="text-muted-foreground w-6 h-6" />
-                <p className="font-semibold">{user?.email}</p>
+                <p className="font-semibold">
+                  {role == "ADMIN" ? personalData?.User?.email : user?.email}
+                </p>
               </div>
               <div className="flex items-center gap-3">
                 <Phone className="text-muted-foreground w-6 h-6" />
@@ -174,9 +192,17 @@ export default function Profile() {
                 )}
               </div>
             </div>
-            <div>
-              <ChevronRight />
-            </div>
+            {role == "USER" && (
+              <div>
+                <ChevronRight />
+              </div>
+            )}
+            <Link to={`/chat/${id}`}>
+              <Button variant={"secondary"}>
+                <MessageCircle />
+                Chat
+              </Button>
+            </Link>
           </Link>
         </div>
         <div className="py-5">
@@ -187,9 +213,11 @@ export default function Profile() {
               {personalData?.resume && (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant={"ghost"} size={"icon"}>
-                      <Ellipsis />
-                    </Button>
+                    {role == "USER" && (
+                      <Button variant={"ghost"} size={"icon"}>
+                        <Ellipsis />
+                      </Button>
+                    )}
                   </DropdownMenuTrigger>
                   <DropdownMenuContent className="w-56">
                     {/* <DropdownMenuItem>
@@ -266,15 +294,19 @@ export default function Profile() {
                     </div>
                   </div>
                   <div className="flex flex-col gap-1">
-                    <Button
-                      type="button"
-                      size={"sm"}
-                      onClick={() => fileInputRef.current?.click()}
-                      variant={"secondary"}
-                    >
-                      <Replace />
-                      {selectedFile?.name ? `${selectedFile.name}` : "Replace"}
-                    </Button>
+                    {role == "USER" && (
+                      <Button
+                        type="button"
+                        size={"sm"}
+                        onClick={() => fileInputRef.current?.click()}
+                        variant={"secondary"}
+                      >
+                        <Replace />
+                        {selectedFile?.name
+                          ? `${selectedFile.name}`
+                          : "Replace"}
+                      </Button>
+                    )}
                     {selectedFile?.size && (
                       <Button size={"sm"}>
                         <Upload />
@@ -289,22 +321,27 @@ export default function Profile() {
                 </div>
               ) : (
                 <div className="p-10 border border-dashed rounded-md flex justify-center">
-                  <div className="flex items-center gap-2">
-                    <Button
-                      type="button"
-                      onClick={() => fileInputRef.current?.click()}
-                      variant={"secondary"}
-                    >
-                      <FileTextIcon />
-                      {selectedFile?.name
-                        ? `${selectedFile.name}`
-                        : "Upload Resume"}
+                  {role == "USER" ? (
+                    <div className="flex items-center gap-2">
+                      <Button
+                        type="button"
+                        onClick={() => fileInputRef.current?.click()}
+                        variant={"secondary"}
+                      >
+                        <FileTextIcon />
+                        {selectedFile?.name
+                          ? `${selectedFile.name}`
+                          : "Upload Resume"}
+                      </Button>
+                      <Button>
+                        <Upload />
+                      </Button>
+                    </div>
+                  ) : (
+                    <Button type="button" disabled variant={"outline"}>
+                      No Resume
                     </Button>
-                    <Button>
-                      <Upload />
-                    </Button>
-                  </div>
-
+                  )}
                   {errors.pdfFile && (
                     <p className="text-red-500 text-sm mt-1">
                       {errors.pdfFile.message}
@@ -317,7 +354,11 @@ export default function Profile() {
         </div>
 
         <Link
-          to="/education"
+          to={
+            role == "USER"
+              ? "/education"
+              : `/education/${personalData?.User?.id}`
+          }
           className="flex justify-between items-center py-5"
         >
           <div>
@@ -331,7 +372,11 @@ export default function Profile() {
           </div>
         </Link>
         <Link
-          to="/experience"
+          to={
+            role == "USER"
+              ? "/experience"
+              : `/experience/${personalData?.User?.id}`
+          }
           className="flex justify-between items-center py-5"
         >
           <div>

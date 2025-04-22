@@ -8,7 +8,7 @@ export interface TokenRes {
   email: string;
   name: string;
   id: string;
-  role: string;
+  role: "ADMIN" | "USER";
 }
 
 export const fetchUserData = createAsyncThunk(
@@ -36,14 +36,14 @@ export interface AuthState {
   isLoggedin: boolean;
   loading: boolean;
   error: boolean;
-  role: string | null;
+  role: "ADMIN" | "USER" | null;
   user: User | null;
 }
 interface User {
   id: string;
   email: string;
   name: string;
-  role: string;
+  role: "ADMIN" | "USER";
 }
 
 const initialState: AuthState = {

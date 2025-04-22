@@ -9,6 +9,21 @@ export const handleGetPersonal = async (req: Request, res: Response) => {
   });
   res.json(personalData);
 };
+export const handleGetPersonalById = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const personalData = await prisma.personalData.findFirst({
+    where: { userId: +id },
+    include:{
+      User:true
+    }
+  });
+  if (!personalData) {
+    res.status(404).json({ message: "Personal data not found" });
+    return;
+  }
+  res.json(personalData);
+  return;
+};
 
 export const handleUpdatePersonal = async (req: Request, res: Response) => {
   try {

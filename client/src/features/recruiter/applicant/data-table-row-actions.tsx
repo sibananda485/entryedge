@@ -60,7 +60,7 @@ import {
 } from "@/features/jobs/jobSlice";
 import { AppliedJob } from "@/features/candidate/appliedJobs/appliedJobSlice";
 import { fetchApplicant } from "./applicantSlice";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
 interface DataTableRowActionsProps<TData> {
   row: Row<TData>;
@@ -173,6 +173,12 @@ export function DataTableRowActions<TData>({
               </DropdownMenuItem>
             </DialogTrigger>
 
+            {/* <DropdownMenuSeparator /> */}
+            <Link to={`/profile/${singleJobApplication.personalData.User.id}`}>
+              <DropdownMenuItem className="flex justify-between items-center">
+                View Profile
+              </DropdownMenuItem>
+            </Link>
             <DropdownMenuSeparator />
             <DropdownMenuSub>
               <DropdownMenuSubTrigger>Status</DropdownMenuSubTrigger>
@@ -194,7 +200,6 @@ export function DataTableRowActions<TData>({
                 </DropdownMenuRadioGroup>
               </DropdownMenuSubContent>
             </DropdownMenuSub>
-            <DropdownMenuSeparator />
           </DropdownMenuContent>
         </DropdownMenu>
         <DialogContent className="w-full max-w-xl max-h-[80vh] overflow-y-auto">
