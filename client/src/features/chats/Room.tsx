@@ -8,17 +8,24 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { ArrowLeft, SendHorizontal } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { io } from "socket.io-client";
 import { Link, useParams } from "react-router-dom";
 import { selectRole, selectUser } from "../auth/authSlice";
-import { useAppSelector } from "@/app/hooks";
+import { useAppDispatch, useAppSelector } from "@/app/hooks";
 import axios from "axios";
 import { BASE_URL, SOCKET_URL } from "@/lib/constants";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+  fetchCandidateStack,
+  fetchCompanyStack,
+  selectChatsData,
+  updateLastMessage,
+} from "./chatSlice";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Phone, Video, MoreVertical } from "lucide-react";
 
 const FormSchema = z.object({
   message: z.string(),
@@ -33,8 +40,10 @@ export interface Messages {
 
 export default function Room() {
   const { id } = useParams();
+  const dispatch = useAppDispatch();
   const userId = useAppSelector(selectUser)?.id;
   const role = useAppSelector(selectRole);
+  const stack = useAppSelector(selectChatsData);
   let roomId: string;
   if (role == "USER" && id) {
     roomId = userId + id;
@@ -49,23 +58,28 @@ export default function Room() {
       message: "",
     },
   });
-  function onSubmit(data: z.infer<typeof FormSchema>) {
-    socket.emit("sendMessage", {
-      roomId,
+  async function onSubmit(data: z.infer<typeof FormSchema>) {
+    const res = await axios.post(BASE_URL + "/messages", {
+      receiverId: id ? +id : "",
+      senderId: userId ? +userId : "",
       message: data.message,
-      senderId: userId,
-      receiverId: id,
     });
-    setMessages((prev) => [
-      ...prev,
-      {
-        receiverId: id || "",
-        senderId: userId || "",
+    if (res.status == 201) {
+      socket.emit("sendMessage", {
+        ...res.data,
+        roomId,
         message: data.message,
-        createdAt: new Date().toString(),
-      },
-    ]);
-
+        senderId: userId,
+        receiverId: id,
+      });
+      dispatch(updateLastMessage({ userId: id, lastMessage: res.data }));
+      setMessages((prev) => [...prev, res.data]);
+      if (messages.length == 0) {
+        role == "USER"
+          ? dispatch(fetchCompanyStack())
+          : dispatch(fetchCandidateStack());
+      }
+    }
     form.reset();
   }
 
@@ -74,26 +88,45 @@ export default function Room() {
     console.log(socket.id);
     socket.emit("connection");
     socket.emit("joinRoom", roomId);
-    socket.on("receiveMessage", (message) => {
-      setMessages((prev) => [
-        ...prev,
-        {
-          receiverId: userId || "",
-          senderId: id || "",
-          message: message,
-          createdAt: new Date().toString(),
-        },
-      ]);
+    socket.on("receiveMessage", (data) => {
+      console.log("Received message:", data);
+      dispatch(updateLastMessage({ userId: id, lastMessage: data }));
+      setMessages((prev) => [...prev, data]);
     });
+
     setMessages(messages.data);
   };
 
   useEffect(() => {
     fetchMessageAndConnectSocket();
+
     return () => {
       socket.disconnect();
     };
   }, [id]);
+
+  const bottomDivRef = useRef<HTMLDivElement | null>(null);
+
+  // Function to scroll to the bottom
+  const scrollToBottom = () => {
+    if (bottomDivRef.current) {
+      bottomDivRef.current.scrollTop = bottomDivRef.current.scrollHeight;
+    }
+  };
+
+  // Scroll to bottom after the component mounts or updates
+  useEffect(() => {
+    scrollToBottom();
+  }, [id, messages]);
+
+  // useEffect(() => {
+  //   if (messages.length == 0 && id) {
+  //     role == "USER"
+  //       ? dispatch(fetchCompanyStack())
+  //       : dispatch(fetchCandidateStack());
+  //   }
+  // }, [messages, id]);
+  const selectedStack = stack?.find((a) => a.userId == id);
 
   return (
     <div
@@ -107,10 +140,33 @@ export default function Room() {
             <ArrowLeft />
           </Button>
         </Link>
-        <p className="font-semibold "> Mind Space Technology</p>
+        {/* <p className="font-semibold ">
+          {" "}
+          {selectedStack?.firstName} {selectedStack?.lastName}
+        </p> */}
+        {/* <div className="border rounded-lg shadow-sm mt-10"> */}
+        <ChatHeader
+          name={`${selectedStack?.firstName || ""} ${
+            selectedStack?.lastName || ""
+          } ${selectedStack?.name || ""}`}
+          status="online"
+          avatarSrc="/placeholder.svg?height=40&width=40"
+          onCallClick={() => alert("Voice call")}
+          onVideoClick={() => alert("Video call")}
+          onMoreClick={() => alert("More options")}
+        />
+        {/* <div className="p-4">
+            <p className="text-center text-muted-foreground">
+              Chat messages would appear here
+            </p>
+          </div>
+        </div> */}
       </div>
-      <ScrollArea className="grow my-2 space-y-2">
-        <div className="flex flex-col justify-end ">
+      <div
+        ref={bottomDivRef}
+        className="h-full overflow-auto grow my-2 space-y-2"
+      >
+        <div className="flex min-h-full flex-col justify-end">
           {messages.map((a, i) => (
             <div
               key={i}
@@ -137,7 +193,7 @@ export default function Room() {
             </div>
           ))}
         </div>
-      </ScrollArea>
+      </div>
       <div>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="flex gap-2">
@@ -163,6 +219,88 @@ export default function Room() {
             </Button>
           </form>
         </Form>
+      </div>
+    </div>
+  );
+}
+
+interface ChatHeaderProps {
+  name: string;
+  status?: "online" | "offline" | "away" | "busy";
+  avatarSrc?: string;
+  lastSeen?: string;
+  onCallClick?: () => void;
+  onVideoClick?: () => void;
+  onMoreClick?: () => void;
+}
+
+export function ChatHeader({
+  name,
+
+  avatarSrc,
+
+  onMoreClick,
+}: ChatHeaderProps) {
+  return (
+    <div className="w-full flex items-center  justify-between pb-2 border-b">
+      <div className="flex items-center space-x-4">
+        <Avatar className="h-10 w-10">
+          <AvatarImage src={avatarSrc || "/placeholder.svg"} alt={name} />
+          <AvatarFallback>{name.slice(0, 2).toUpperCase()}</AvatarFallback>
+        </Avatar>
+        <div>
+          <h2 className="text-lg font-semibold">{name}</h2>
+          {/* <div className="flex items-center text-sm text-muted-foreground">
+            {status === "online" && (
+              <span className="flex items-center">
+                <span className="mr-1.5 h-2 w-2 rounded-full bg-green-500"></span>
+                Online
+              </span>
+            )}
+            {status === "away" && (
+              <span className="flex items-center">
+                <span className="mr-1.5 h-2 w-2 rounded-full bg-yellow-500"></span>
+                Away
+              </span>
+            )}
+            {status === "busy" && (
+              <span className="flex items-center">
+                <span className="mr-1.5 h-2 w-2 rounded-full bg-red-500"></span>
+                Do not disturb
+              </span>
+            )}
+            {status === "offline" && lastSeen && (
+              <span>Last seen {lastSeen}</span>
+            )}
+            {status === "offline" && !lastSeen && <span>Offline</span>}
+          </div> */}
+        </div>
+      </div>
+      <div className="flex items-center space-x-2">
+        {/* <Button
+          variant="ghost"
+          size="icon"
+          onClick={onCallClick}
+          aria-label="Voice call"
+        >
+          <Phone className="h-5 w-5" />
+        </Button>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={onVideoClick}
+          aria-label="Video call"
+        >
+          <Video className="h-5 w-5" />
+        </Button> */}
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={onMoreClick}
+          aria-label="More options"
+        >
+          <MoreVertical className="h-5 w-5" />
+        </Button>
       </div>
     </div>
   );

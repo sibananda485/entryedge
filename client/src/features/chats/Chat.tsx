@@ -4,11 +4,17 @@ import axios from "axios";
 import { BASE_URL } from "@/lib/constants";
 import { Company } from "../recruiter/company/companySlice";
 import { Link, Outlet, useParams } from "react-router-dom";
-import { useAppSelector } from "@/app/hooks";
+import { useAppDispatch, useAppSelector } from "@/app/hooks";
 import { selectRole, selectUser } from "../auth/authSlice";
 import { Personal } from "../personal/personalSlice";
 import NoMessage from "@/assets/noMessage.svg";
 import { Messages } from "./Room";
+import {
+  fetchCandidateStack,
+  fetchCompanyStack,
+  selectChatsData,
+  selectChatsLoading,
+} from "./chatSlice";
 
 interface CandidateStack extends Personal {
   lastMessage: Messages;
@@ -21,24 +27,42 @@ interface CompanyStack extends Company {
 export default function Chat() {
   const role = useAppSelector(selectRole);
   const userId = useAppSelector(selectUser)?.id;
-
+  const dispatch = useAppDispatch();
   const { id } = useParams();
-  const [companyList, setCompanyList] = useState<CompanyStack[]>([]);
-  const [candidateList, setCandidateList] = useState<CandidateStack[]>([]);
+  // const [companyList, setCompanyList] = useState<CompanyStack[]>([]);
+  // const [candidateList, setCandidateList] = useState<CandidateStack[]>([]);
+  const companyList = useAppSelector(selectChatsData);
+  const candidateList = useAppSelector(selectChatsData);
+  const loading = useAppSelector(selectChatsLoading);
 
-  const getCompanyList = async () => {
-    const { data } = await axios.get(BASE_URL + "/company/all");
-    setCompanyList(data);
-  };
+  // const getCompanyList = async () => {
+  //   const { data } = await axios.get(BASE_URL + "/company/all");
+  //   setCompanyList(data);
+  // };
 
-  const getCandidateList = async () => {
-    const { data } = await axios.get(BASE_URL + "/candidate");
-    setCandidateList(data);
-  };
+  // const getCandidateList = async () => {
+  //   const { data } = await axios.get(BASE_URL + "/candidate");
+  //   setCandidateList(data);
+  // };
+  // const getChats = async () => {
+  //   const { data } = await axios.get(BASE_URL + "/messages");
+  //   // const companyList = data.filter(
+  //   //   (chat: Messages) => chat.senderId == userId || chat.receiverId == userId
+  //   // );
+  //   console.log(data);
+  //   // setCompanyList(companyList);
+  // };
 
   useEffect(() => {
-    role == "USER" ? getCompanyList() : getCandidateList();
+    // getChats();
+    role == "USER"
+      ? dispatch(fetchCompanyStack())
+      : dispatch(fetchCandidateStack());
   }, []);
+
+  if (loading || !companyList || !candidateList) {
+    return <p>Loading...</p>;
+  }
 
   return (
     <div

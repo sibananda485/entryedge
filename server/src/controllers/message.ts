@@ -26,7 +26,55 @@ export const handleCreateMessage = async (req: Request, res: Response) => {
     res.status(400).json({ message: "Schema validation error", error });
     return;
   }
+  const message = await prisma.messages.create({
+    data: req.body,
+  });
+  res.status(201).json(message);
+};
+
+export const getChats = async (req: Request, res: Response) => {
   const user = req.user;
-  const ducation = await prisma.messages.findMany();
-  res.status(201).json(ducation);
+  if (user?.role == "ADMIN") {
+    const result = await prisma.user.findMany({
+      where: {
+        role: "USER",
+        sendMessages: {
+          some: {
+            receiverId: user.id,
+          },
+        },
+        receiveMessages: {
+          some: {
+            senderId: user.id,
+          },
+        },
+      },
+      include: {
+        receiveMessages: true,
+        sendMessages: true,
+      },
+    });
+    res.json(result);
+  } else {
+    const result = await prisma.user.findMany({
+      where: {
+        id: user?.id,
+        sendMessages: {
+          some: {
+            receiverId: user?.id,
+          },
+        },
+        receiveMessages: {
+          some: {
+            senderId: user?.id,
+          },
+        },
+      },
+      include: {
+        receiveMessages: true,
+        sendMessages: true,
+      },
+    });
+    res.json(result);
+  }
 };

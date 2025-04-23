@@ -62,14 +62,7 @@ io.on("connection", (socket) => {
     socket.join(roomId);
   });
   socket.on("sendMessage", async (data) => {
-    const message = await prisma.messages.create({
-      data: {
-        receiverId: +data.receiverId,
-        senderId: +data.senderId,
-        message: data.message,
-      },
-    });
-    socket.to(data.roomId).emit("receiveMessage", data.message);
+    socket.to(data.roomId).emit("receiveMessage", data);
   });
 });
 

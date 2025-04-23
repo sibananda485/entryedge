@@ -3,6 +3,45 @@
 @tailwind utilities;
 
 
+/* Default (Light Mode) Scrollbar */
+html {
+  --scrollbar-thumb: #aaa; /* Light color for thumb */
+  --scrollbar-track: #f0f0f0; /* Light background for track */
+}
+
+/* Dark Mode Scrollbar */
+html.dark {
+  --scrollbar-thumb: #555; /* Darker color for thumb */
+  --scrollbar-track: #333; /* Dark background for track */
+}
+
+/* Applying Scrollbar Styles */
+::-webkit-scrollbar {
+  width: 8px; /* Width of the scrollbar */
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--scrollbar-thumb);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: var(--scrollbar-track);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #888; /* Darker when hovered */
+}
+
+/* Firefox Scrollbar Styling */
+html {
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track); /* Firefox */
+  scrollbar-width: thin; /* Firefox */
+}
+
+
+
 @layer base {
   :root {
     --background: 0 0% 100%;
