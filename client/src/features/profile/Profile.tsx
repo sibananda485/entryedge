@@ -192,17 +192,18 @@ export default function Profile() {
                 )}
               </div>
             </div>
-            {role == "USER" && (
+            {role == "USER" ? (
               <div>
                 <ChevronRight />
               </div>
+            ) : (
+              <Link to={`/chat/${id}`}>
+                <Button variant={"secondary"}>
+                  <MessageCircle />
+                  Chat
+                </Button>
+              </Link>
             )}
-            <Link to={`/chat/${id}`}>
-              <Button variant={"secondary"}>
-                <MessageCircle />
-                Chat
-              </Button>
-            </Link>
           </Link>
         </div>
         <div className="py-5">
