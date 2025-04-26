@@ -3,6 +3,7 @@ import { prisma } from "..";
 import JobSchema from "../schemas/job";
 
 export const handleGetJob = async (req: Request, res: Response) => {
+  const search = req.query.search as string;
   const user = req.user;
   if (user && user.role == "ADMIN") {
     const company = await prisma.company.findFirst({
@@ -43,6 +44,17 @@ export const handleGetJob = async (req: Request, res: Response) => {
     const jobs = await prisma.job.findMany({
       where: {
         isActive: true,
+        ...(search && {
+          OR: [
+            { title: { contains: search, mode: "insensitive" } },
+            { location: { contains: search, mode: "insensitive" } },
+            { skills: { contains: search, mode: "insensitive" } },
+            { employmentType: { contains: search, mode: "insensitive" } },
+            { salaryMin: { contains: search, mode: "insensitive" } },
+            { salaryMax: { contains: search, mode: "insensitive" } },
+            { Company: { name: { contains: search, mode: "insensitive" } } },
+          ],
+        }),
       },
       orderBy: {
         updatedAt: "desc",

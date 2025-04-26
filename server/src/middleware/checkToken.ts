@@ -9,6 +9,7 @@ export const checkToken = async (
   next: NextFunction
 ) => {
   const authHeader = req.headers.authorization;
+  console.log(authHeader)
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
     next();
     return;

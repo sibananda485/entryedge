@@ -36,7 +36,7 @@ export function ProfileDD() {
   const handleSignOut = async () => {
     localStorage.removeItem("token");
     dispatch({ type: "LOGOUT" });
-    navigate("/");
+    navigate("/login");
     toast({
       title: "Logout Successfully",
       duration: 1000,

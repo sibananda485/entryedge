@@ -71,7 +71,7 @@ export default function Chat() {
       <div
         className={`${
           id ? "hidden sm:block" : ""
-        } col-span-4 border rounded-lg p-2`}
+        } col-span-4 border rounded-lg p-2 overflow-hidden`}
       >
         <div>
           <p className="font-bold text-xl">Messages</p>
@@ -158,7 +158,10 @@ export default function Chat() {
                         ) : (
                           <span className="italic">
                             {candidate.firstName} :{" "}
-                            {candidate.lastMessage.message}
+                            <p className="line-clamp-1 ">
+                              {" "}
+                              {candidate.lastMessage.message.substring(0, 20)}{" "}
+                            </p>
                           </span>
                         )
                       ) : (

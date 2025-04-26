@@ -152,10 +152,10 @@ export default function Profile() {
   }
   return (
     <>
-      <div className="max-w-3xl container mx-auto divide-y-2">
+      <div className="px-2 sm:px-0 max-w-3xl container mx-auto divide-y-2">
         <div className="space-y-8 py-5">
           <div className="flex justify-between items-center">
-            <h1 className="text-4xl font-bold tracking-wider">
+            <h1 className="text-3xl sm:text-4xl font-bold tracking-wider">
               {personalData?.firstName} {personalData?.lastName}
             </h1>
             <div className="bg-foreground text-background text-4xl font-bold flex justify-center items-center rounded-full p-5">

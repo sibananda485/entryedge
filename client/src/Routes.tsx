@@ -21,6 +21,7 @@ import { MyJobs } from "./tabs/MyJobs";
 import AppliedJob from "./features/candidate/appliedJobs/AppliedJob";
 import Applicants from "./features/recruiter/applicant/Applicants";
 import MyJobsTable from "./features/recruiter/myJobsTable/MyJobsTable";
+import { JobDetailsCard } from "./features/jobs/JobDetailsCard";
 
 export const router = createBrowserRouter(
   [
@@ -32,6 +33,10 @@ export const router = createBrowserRouter(
         {
           path: "/",
           element: <Jobs />,
+        },
+        {
+          path: "/job/:id",
+          element: <JobDetailsCard />,
         },
         {
           path: "/my-application",

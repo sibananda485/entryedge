@@ -20,6 +20,10 @@ import {
 import { Bookmark, ExternalLink } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+import {
+  createAppliedJob,
+  selectAppliedJobData,
+} from "../appliedJobs/appliedJobSlice";
 
 export default function SavedJob() {
   const { toast } = useToast();
@@ -27,6 +31,8 @@ export default function SavedJob() {
   const savedJobData = useAppSelector(selectSavedJobData);
   const loading = useAppSelector(selectSavedJobLoading);
   const error = useAppSelector(selectSavedJobError);
+  const appliedJobs = useAppSelector(selectAppliedJobData);
+  // const data = useAppSelector(selectJobDataById);
 
   const handleDelete = async (id: string) => {
     try {
@@ -40,6 +46,23 @@ export default function SavedJob() {
         title: "Failed to remove item",
         description: "Please try again",
       });
+    }
+  };
+  const handleApply = async (id: string) => {
+    // setIsAppling(true);
+    try {
+      await dispatch(createAppliedJob(id)).unwrap();
+      toast({
+        title: "Job applied successfully",
+      });
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Failed to appliy job",
+        description: "Please try again",
+      });
+    } finally {
+      // setIsAppling(false);
     }
   };
 
@@ -87,48 +110,57 @@ export default function SavedJob() {
           </Card>
         ) : (
           <div className="space-y-4">
-            {savedJobData.map((job) => (
-              <Card key={job.id}>
-                <CardHeader>
-                  <CardTitle className="flex justify-between items-start">
-                    <div className="flex items-center gap-3">
-                      <div className="bg-secondary-foreground text-background flex items-center justify-center h-10 w-10 rounded-lg">
-                        {job.Company.name[0]}
+            {savedJobData.map((job) => {
+              const isJobApplied = appliedJobs?.some(
+                (a) => a.jobId === job?.id
+              );
+
+              return (
+                <Card key={job.id}>
+                  <CardHeader>
+                    <CardTitle className="flex justify-between items-start">
+                      <div className="flex items-center gap-3">
+                        <div className="bg-secondary-foreground text-background flex items-center justify-center h-10 w-10 rounded-lg">
+                          {job.Company.name[0]}
+                        </div>
+                        <div>
+                          <h2 className="text-xl font-semibold">{job.title}</h2>
+                          <p className="text-sm text-muted-foreground">
+                            {job.Company.name}
+                          </p>
+                        </div>
                       </div>
-                      <div>
-                        <h2 className="text-xl font-semibold">{job.title}</h2>
-                        <p className="text-sm text-muted-foreground">
-                          {job.Company.name}
-                        </p>
-                      </div>
-                    </div>
+                      <Button
+                        size="icon"
+                        variant="outline"
+                        onClick={() => handleDelete(job.id)}
+                      >
+                        <BookmarkIcon className="h-4 w-4 fill-current" />
+                        <span className="sr-only">Remove job</span>
+                      </Button>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-muted-foreground">{job.location}</p>
+                  </CardContent>
+                  <CardFooter className="space-x-2">
+                    <Link to={`/job/${job.id}`}>
+                      <Button variant="outline">
+                        <ExternalLink className="h-4 w-4" />
+                        View Job
+                      </Button>
+                    </Link>
                     <Button
-                      size="icon"
-                      variant="outline"
-                      onClick={() => handleDelete(job.id)}
+                      disabled={isJobApplied}
+                      onClick={() => handleApply(job.id)}
                     >
-                      <BookmarkIcon className="h-4 w-4 fill-current" />
-                      <span className="sr-only">Remove job</span>
+                      <Check className="h-4 w-4" />
+                      {isJobApplied ? "Applied" : "Apply now"}
                     </Button>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground">{job.location}</p>
-                </CardContent>
-                <CardFooter className="space-x-2">
-                  <Link to={`/jobs/${job.id}`}>
-                    <Button variant="outline">
-                      <ExternalLink className="h-4 w-4" />
-                      View Job
-                    </Button>
-                  </Link>
-                  <Button>
-                    <Check className="h-4 w-4" />
-                    Apply now
-                  </Button>
-                </CardFooter>
-              </Card>
-            ))}
+                  </CardFooter>
+                </Card>
+              );
+            })}
           </div>
         )}
       </div>

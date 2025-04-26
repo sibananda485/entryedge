@@ -27,6 +27,7 @@ import {
   selectJobDataById,
   selectJobErrorById,
   fetchJobData,
+  fetchJobDataById,
 } from "./jobSlice";
 import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
@@ -36,18 +37,22 @@ import {
   deleteSavedJob,
   selectSavedJobData,
 } from "../candidate/savedJob/savedJobSlice";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import {
   createAppliedJob,
   selectAppliedJobData,
 } from "../candidate/appliedJobs/appliedJobSlice";
+import { selectIsLoggedIn } from "../auth/authSlice";
+import { useNavigate, useParams } from "react-router-dom";
 
 export const JobDetailsCard = () => {
+  const { id } = useParams();
   const { toast } = useToast();
   const [onGoing, setOnGoing] = useState(false);
   const [isApplying, setIsAppling] = useState(false);
   const dispatch = useAppDispatch();
+  const isLoggedIn = useAppSelector(selectIsLoggedIn);
   const loading = useAppSelector(selectJobLoadingById);
   const error = useAppSelector(selectJobErrorById);
   const data = useAppSelector(selectJobDataById);
@@ -55,8 +60,16 @@ export const JobDetailsCard = () => {
   const appliedJobs = useAppSelector(selectAppliedJobData);
   const isJobSaved = savedJobs?.some((job) => job.id === data?.id);
   const isJobApplied = appliedJobs?.some((job) => job.jobId === data?.id);
-
+  const navigate = useNavigate();
   const handleAdd = async () => {
+    if (!isLoggedIn) {
+      toast({
+        variant: "default",
+        title: "Ohh uh! you are not logged in",
+        description: "Please login to apply for the job",
+      });
+      return navigate("/login");
+    }
     if (data) {
       try {
         setOnGoing(true);
@@ -97,6 +110,14 @@ export const JobDetailsCard = () => {
   };
 
   const handleApply = async () => {
+    if (!isLoggedIn) {
+      toast({
+        variant: "default",
+        title: "Ohh uh! you are not logged in",
+        description: "Please login to apply for the job",
+      });
+      return navigate("/login");
+    }
     if (data) {
       setIsAppling(true);
       try {
@@ -115,6 +136,11 @@ export const JobDetailsCard = () => {
       }
     }
   };
+
+  useEffect(() => {
+    id && dispatch(fetchJobDataById(id));
+  }, [id]);
+
   if (loading) {
     return <JobDetailsCardSkeleton />;
   }
@@ -129,7 +155,11 @@ export const JobDetailsCard = () => {
     );
   }
   return (
-    <Card className="hidden sm:block sticky top-14 h-remaining-height col-span-2 overflow-auto">
+    <Card
+      className={`hidden ${
+        id && "max-w-5xl mx-auto"
+      } sm:block sticky top-14 h-remaining-height col-span-2 overflow-auto`}
+    >
       <ScrollArea className="h-full">
         <CardHeader className="sticky top-0 bg-background">
           <div className="flex justify-between items-start">
@@ -238,14 +268,14 @@ export const JobDetailsCard = () => {
           </div>
         </CardContent>
         <CardFooter className="flex justify-between">
-          <Button variant="outline" className="w-[48%]">
+          {/* <Button variant="outline" className="w-[48%]">
             <BookmarkIcon className="mr-2 h-4 w-4" />
             Save for Later
-          </Button>
+          </Button> */}
           <Button
             disabled={isJobApplied}
             onClick={() => handleApply()}
-            className="w-[48%]"
+            className="w-full"
           >
             {isJobApplied ? (
               "Applied"

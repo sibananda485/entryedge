@@ -83,7 +83,9 @@ export default function AppliedJob() {
                 <Card key={application.id}>
                   <CardHeader>
                     <CardTitle className="flex justify-between items-center">
-                      {application.job.title}
+                      <Link to={"/job/" + application.jobId}>
+                        {application.job.title}
+                      </Link>
                       <Badge
                         variant={
                           application.status === "pending"

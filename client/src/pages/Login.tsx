@@ -138,9 +138,9 @@ export default function Login() {
                   <FormItem>
                     <div className="flex items-center justify-between">
                       <FormLabel>Password</FormLabel>
-                      <Link to="#" className="text-sm underline">
+                      {/* <Link to="#" className="text-sm underline">
                         Forgot your password?
-                      </Link>
+                      </Link> */}
                     </div>
                     <FormControl>
                       <Input type="password" {...field} />

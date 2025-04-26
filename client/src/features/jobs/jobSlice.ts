@@ -44,10 +44,15 @@ interface Company {
   industry: string;
 }
 
-export const fetchJobData = createAsyncThunk("job/fetchJobData", async () => {
-  const response = await axios.get<Job[]>(BASE_URL + "/job");
-  return response.data;
-});
+export const fetchJobData = createAsyncThunk(
+  "job/fetchJobData",
+  async (params?: string) => {
+    const response = await axios.get<Job[]>(
+      BASE_URL + "/job?" + (params || "")
+    );
+    return response.data;
+  }
+);
 
 export const fetchJobDataById = createAsyncThunk(
   "job/fetchJobDataById",

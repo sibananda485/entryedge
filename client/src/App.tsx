@@ -10,17 +10,21 @@ import logo from "@/assets/banner3.png";
 import { Loader } from "lucide-react";
 import { router } from "./Routes";
 import "@/lib/axios";
-import { fetchAppliedJob } from "./features/candidate/appliedJobs/appliedJobSlice";
+import {
+  fetchAppliedJob,
+  selectAppliedJobData,
+} from "./features/candidate/appliedJobs/appliedJobSlice";
 
 function App() {
   const dispatch = useAppDispatch();
   const loading = useAppSelector(selectAuthLoading);
   const isLoggedIn = useAppSelector(selectIsLoggedIn);
+  const appliedJobData = useAppSelector(selectAppliedJobData);
   const token = localStorage.getItem("token");
 
   useEffect(() => {
     dispatch(fetchUserData(token));
-    dispatch(fetchAppliedJob());
+    isLoggedIn && dispatch(fetchAppliedJob());
   }, [dispatch, token, isLoggedIn]);
 
   if (loading) {

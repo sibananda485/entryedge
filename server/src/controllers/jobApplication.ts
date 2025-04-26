@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { prisma } from "..";
 
 export const handleGetJobApplication = async (req: Request, res: Response) => {
+  console.log("REQUEST JOB APPLICATION", req.user);
   const user = req.user;
   if (user?.role == "USER") {
     const jobApplications2 = await prisma.personalData.findFirst({
