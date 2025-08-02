@@ -43,7 +43,7 @@ import { useAppDispatch, useAppSelector } from "@/app/hooks";
 import ApiError from "@/components/custom/ApiError";
 import { useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { selectUser } from "../auth/authSlice";
+import { selectUser } from "@/features/auth/authSlice";
 
 const formSchema = z.object({
   firstName: z
