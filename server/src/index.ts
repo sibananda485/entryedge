@@ -96,3 +96,6 @@ server.listen(Number(PORT), () => {
   console.log(`Server is running on http://localhost:${PORT}`);
   console.log(`Server is also accessible at http://${LOCAL_IP}:${PORT}`);
 });
+
+
+// Prisma client generated
