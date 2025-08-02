@@ -1,7 +1,5 @@
-export const BASE_URL =
-  "https://entryedge-i4vo12m41-sibananda-sahus-projects.vercel.app/api";
-export const SOCKET_URL =
-  "https://entryedge-i4vo12m41-sibananda-sahus-projects.vercel.app";
+export const BASE_URL = "https://entryedge.vercel.app/api";
+export const SOCKET_URL = "https://entryedge.vercel.app";
 // export const BASE_URL = "http://localhost:3000/api";
 // export const SOCKET_URL = "http://localhost:3000";
 export const S3_BUCKET_URL = "https://entryedge.s3.ap-south-1.amazonaws.com";

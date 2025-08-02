@@ -51,9 +51,9 @@ const app = express();
 const server = createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: ["http://localhost:5173", `http://${LOCAL_IP}:5173`], // Allow both localhost and local IP
+    origin: "*", // Allow both localhost and local IP
     methods: ["GET", "POST"],
-    credentials: true,
+    credentials: false,
   },
 });
 
