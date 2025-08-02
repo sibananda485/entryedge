@@ -68,7 +68,7 @@ io.on("connection", (socket) => {
 
 app.use(
   cors({
-    origin: ["http://localhost:5173", `http://${LOCAL_IP}:5173`], // Allow both localhost and local IP
+    origin: ["http://localhost:5173", `http://192.168.0.103:5173`], // Allow both localhost and local IP
     credentials: true,
   })
 );
@@ -92,10 +92,10 @@ app.use("/api/resume", resumeRouter);
 
 // Listen on all interfaces (0.0.0.0) instead of just localhost
 // For TypeScript, we need to use a slightly different approach
-// server.listen(Number(PORT), () => {
-//   console.log(`Server is running on http://localhost:${PORT}`);
-//   console.log(`Server is also accessible at http://${LOCAL_IP}:${PORT}`);
-// });
+server.listen(Number(PORT), () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
+  console.log(`Server is also accessible at http://${LOCAL_IP}:${PORT}`);
+});
 
 export default server;
 // Prisma client generated
