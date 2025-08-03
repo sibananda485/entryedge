@@ -1,11 +1,14 @@
-export const BASE_URL = "https://entryedge.vercel.app/api";
-export const SOCKET_URL = "https://entryedge.vercel.app";
-// export const BASE_URL = "http://localhost:3000/api";
-// export const SOCKET_URL = "http://localhost:3000";
+export const BASE_URL = "entryedge-ye9e.vercel.app/api";
+export const SOCKET_URL = "entryedge-ye9e.vercel.app";
 export const S3_BUCKET_URL = "https://entryedge.s3.ap-south-1.amazonaws.com";
 
+
+// export const BASE_URL = "http://localhost:3000/api";
+// export const SOCKET_URL = "http://localhost:3000";
 // export const BASE_URL = "http://192.168.0.103:3000/api";
 // export const SOCKET_URL = "http://192.168.0.103:3000";
+
+
 interface Nav {
   label: string;
   path: string;
