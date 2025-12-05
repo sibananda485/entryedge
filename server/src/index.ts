@@ -73,17 +73,17 @@ app.get("/", (req: Request, res: Response) => {
   res.send("JAY JAGANNATH");
 });
 
-app.use("/api/auth", authRouter);
-app.use("/api/company", companyRouter);
-app.use("/api/personal", personalDataRouter);
-app.use("/api/education", educationRouter);
-app.use("/api/experience", experienceRouter);
-app.use("/api/job", jobRouter);
-app.use("/api/saved-job", savedJobRouter);
-app.use("/api/jobapplication", jobApplicationRouter);
-app.use("/api/candidate", candidateRouter);
-app.use("/api/messages", messageRouter);
-app.use("/api/resume", resumeRouter);
+app.use("/auth", authRouter);
+app.use("/company", companyRouter);
+app.use("/personal", personalDataRouter);
+app.use("/education", educationRouter);
+app.use("/experience", experienceRouter);
+app.use("/job", jobRouter);
+app.use("/saved-job", savedJobRouter);
+app.use("/jobapplication", jobApplicationRouter);
+app.use("/candidate", candidateRouter);
+app.use("/messages", messageRouter);
+app.use("/resume", resumeRouter);
 
 // Listen on all interfaces (0.0.0.0) instead of just localhost
 // For TypeScript, we need to use a slightly different approach

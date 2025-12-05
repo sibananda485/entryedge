@@ -4,8 +4,8 @@ export const S3_BUCKET_URL = "https://entryedge.s3.ap-south-1.amazonaws.com";
 
 // export const BASE_URL = "http://localhost:3000/api";
 // export const SOCKET_URL = "http://localhost:3000";
-export const BASE_URL = "http://43.204.36.28:3000/api";
-export const SOCKET_URL = "http://43.204.36.28:3000";
+export const BASE_URL = "/api";
+export const SOCKET_URL = "/";
 
 interface Nav {
   label: string;
